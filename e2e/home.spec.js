@@ -11,12 +11,13 @@ test.describe("Home Page (Safari & Mobile Safari)", () => {
 
     // Verify Navigation Bar items
     const navItems = page.locator(".c-nav-item");
-    await expect(navItems).toHaveCount(5);
+    await expect(navItems).toHaveCount(6);
     await expect(navItems.nth(0)).toHaveText("概要 (Home)");
     await expect(navItems.nth(1)).toHaveText("UIコンポーネント");
     await expect(navItems.nth(2)).toHaveText("CSSレイアウト");
     await expect(navItems.nth(3)).toHaveText("状態 & ルーティング");
-    await expect(navItems.nth(4)).toHaveText("ベンチマーク");
+    await expect(navItems.nth(4)).toHaveText("REST / SWR");
+    await expect(navItems.nth(5)).toHaveText("ベンチマーク");
 
     // Active state for Home
     await expect(navItems.nth(0)).toHaveClass(/is-active/);

@@ -149,6 +149,14 @@ export function HomePage() {
         button(
           {
             class: "c-btn",
+            onclick: () => navigate("/api/users/1"),
+            style: "margin: 4px;",
+          },
+          "REST API & SWR 非同期連携",
+        ),
+        button(
+          {
+            class: "c-btn",
             onclick: () => navigate("/benchmark"),
             style: "margin: 4px;",
           },

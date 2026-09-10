@@ -34,3 +34,7 @@ export { attachPopover } from "./components/popover.js";
 export { createTabs, createAccordionItem } from "./components/tabs.js";
 export { showToast } from "./components/toast.js";
 export { Stack, HStack, VStack } from "./components/stack.js";
+export { request, ApiError, setApiBaseUrl, getApiBaseUrl } from "./api/client.js";
+export { CacheStore, globalCache, mutate } from "./lib/cache.js";
+export { createResource, createSWRResource } from "./lib/swrResource.js";
+export { subscribeToRevalidation, triggerManualRevalidation } from "./lib/events.js";

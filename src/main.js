@@ -5,6 +5,7 @@ import { ComponentsPage } from "./pages/ComponentsPage.js";
 import { LayoutPage } from "./pages/LayoutPage.js";
 import { BenchmarkPage } from "./pages/BenchmarkPage.js";
 import { StatePage } from "./pages/StatePage.js";
+import { UserDetailPage } from "./pages/UserDetailPage.js";
 import { authStore } from "./core/store.js";
 import "./styles/subset.css";
 
@@ -17,6 +18,8 @@ const routes = {
   "/layout": LayoutPage,
   "/state": StatePage,
   "/state/users/:id": StatePage,
+  "/api": UserDetailPage,
+  "/api/users/:id": UserDetailPage,
 };
 
 const navItems = [
@@ -24,6 +27,7 @@ const navItems = [
   { label: "UIコンポーネント", path: "/components" },
   { label: "CSSレイアウト", path: "/layout" },
   { label: "状態 & ルーティング", path: "/state" },
+  { label: "REST / SWR", path: "/api/users/1" },
   { label: "ベンチマーク", path: "/benchmark" },
 ];
 

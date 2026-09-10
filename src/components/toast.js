@@ -14,6 +14,12 @@ function getOrCreateContainer() {
   return toastContainer;
 }
 
+const TOAST_CLASS_MAP = {
+  error: "c-toast is-error",
+  info: "c-toast",
+  success: "c-toast is-success",
+};
+
 /**
  * Shows an ultra-lightweight toast notification.
  * Auto-cleans and unmounts container from body when empty (zero memory leak).
@@ -24,8 +30,7 @@ export function showToast(message, type = "info", duration = 3000) {
 
   const toastEl = div(
     {
-      class:
-        `c-toast ${type === "success" ? "is-success" : type === "error" ? "is-error" : ""}`.trim(),
+      class: TOAST_CLASS_MAP[type] || "c-toast",
     },
     message,
   );

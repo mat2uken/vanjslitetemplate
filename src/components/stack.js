@@ -98,11 +98,18 @@ export function Stack(props = {}, ...children) {
   );
 }
 
+const STACK_DIR_MAP = {
+  horizontal: Object.freeze({ direction: "horizontal" }),
+  vertical: Object.freeze({ direction: "vertical" }),
+};
+
 function createStack(defaultDirection) {
+  const defaultOpts =
+    STACK_DIR_MAP[defaultDirection] || Object.freeze({ direction: defaultDirection });
   return (props, ...children) =>
     isChild(props)
-      ? Stack({ direction: defaultDirection }, props, ...children)
-      : Stack({ ...props, direction: defaultDirection }, ...children);
+      ? Stack(defaultOpts, props, ...children)
+      : Stack({ direction: defaultDirection, ...props }, ...children);
 }
 
 /**

@@ -3,19 +3,21 @@ import { mountPortal } from "./portal.js";
 import { onSafeBackKey } from "../utils/events.js";
 
 const { button, div, h3, p } = van.tags;
+const EMPTY_OBJECT = Object.freeze({});
 
 /**
  * Creates and displays a Portal-based Modal.
  * Guaranteed compatibility with Cobalt/Webf/Lynx without <dialog> dependency.
  */
-export function openModal({
-  cancelText = "Cancel",
-  content,
-  okText = "OK",
-  onCancel,
-  onOk,
-  title = "Information",
-}) {
+export function openModal(options = EMPTY_OBJECT) {
+  const {
+    cancelText = "Cancel",
+    content,
+    okText = "OK",
+    onCancel,
+    onOk,
+    title = "Information",
+  } = options;
   let unmountPortalFn = null;
   let removeKeyHandler = null;
   let focusTimer = null;

@@ -24,7 +24,11 @@ export function createTabs(tabs, defaultTabId = tabs[0]?.id) {
         button(
           {
             class: () => `c-tabs-btn ${activeTabId.val === tab.id ? "is-active" : ""}`,
-            onclick: () => (activeTabId.val = tab.id),
+            onclick: () => {
+              if (activeTabId.val !== tab.id) {
+                activeTabId.val = tab.id;
+              }
+            },
           },
           tab.label,
         ),
@@ -52,12 +56,14 @@ export function createAccordionItem(title, content, defaultOpen = false) {
     button(
       {
         class: "c-btn",
-        onclick: () => (isOpen.val = !isOpen.val),
+        onclick: () => {
+          isOpen.val = !isOpen.val;
+        },
         style:
           "width: 100%; border: none; border-radius: 0; display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background-color: #f8fafc; font-weight: 600;",
       },
       title,
-      () => span({ style: "font-size: 12px; color: #64748b;" }, isOpen.val ? "▲" : "▼"),
+      span({ style: "font-size: 12px; color: #64748b;" }, () => (isOpen.val ? "▲" : "▼")),
     ),
     () =>
       isOpen.val

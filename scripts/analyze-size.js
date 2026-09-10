@@ -61,6 +61,9 @@ async function main() {
     { file: "src/components/popover.js", label: "8. Safe Popover" },
     { file: "src/components/tabs.js", label: "9. Lightweight Tabs" },
     { file: "src/components/toast.js", label: "10. Lightweight Toast" },
+    { file: "src/api/client.js", label: "11. REST API Client" },
+    { file: "src/lib/cache.js", label: "12. In-Memory SWR Cache" },
+    { file: "src/lib/swrResource.js", label: "13. SWR Resource Hook" },
     { file: "src/bundle-core.js", label: "★ FULL MODEL-C RUNTIME" },
   ];
 

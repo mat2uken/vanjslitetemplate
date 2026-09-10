@@ -4,12 +4,13 @@ import { placeSafePopover } from "../utils/position.js";
 import { onOutsideTap, onSafeBackKey } from "../utils/events.js";
 
 const { div } = van.tags;
+const EMPTY_OBJECT = Object.freeze({});
 
 /**
  * Creates a Safe Popover attached to a trigger element.
  * Zero dependency on native Popover API or Floating UI.
  */
-export function attachPopover(triggerEl, contentOrFactory, options = {}) {
+export function attachPopover(triggerEl, contentOrFactory, options = EMPTY_OBJECT) {
   let isOpen = false;
   let unmountPortalFn = null;
   let removeOutsideTap = null;

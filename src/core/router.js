@@ -160,25 +160,44 @@ export function matchRoute(routeTable, currentPathname) {
   const normalized = normalizeRoutes(routeTable);
 
   for (let i = 0; i < normalized.length; i++) {
-    const { pattern, component } = normalized[i];
-    const { regex, keys } = compilePattern(pattern);
+    const route = normalized[i];
+
+    // Ultra-fast path: Direct string pointer equality for static routes (bypasses regex engine)
+    if (route.pattern === currentPathname) {
+      if (!route._staticMatch) {
+        route._staticMatch = Object.freeze({
+          component: route.component,
+          params: EMPTY_OBJECT,
+          pattern: route.pattern,
+        });
+      }
+      return route._staticMatch;
+    }
+
+    const { regex, keys } = compilePattern(route.pattern);
     const match = regex.exec(currentPathname);
 
     if (match) {
       if (keys.length === 0) {
-        return { component, params: EMPTY_OBJECT, pattern };
+        if (!route._staticMatch) {
+          route._staticMatch = Object.freeze({
+            component: route.component,
+            params: EMPTY_OBJECT,
+            pattern: route.pattern,
+          });
+        }
+        return route._staticMatch;
       }
       const params = {};
       for (let k = 0; k < keys.length; k++) {
-        const key = keys[k];
         const val = match[k + 1];
         try {
-          params[key] = decodeURIComponent(val);
+          params[keys[k]] = decodeURIComponent(val);
         } catch {
-          params[key] = val;
+          params[keys[k]] = val;
         }
       }
-      return { component, params, pattern };
+      return { component: route.component, params, pattern: route.pattern };
     }
   }
   return null;
@@ -200,6 +219,17 @@ export const currentRoute = van.state(initialLoc.pathname);
 
 function updateRoute() {
   const loc = parseLocation();
+  const current = routeState.val;
+
+  // Skip redundant state updates if location has not changed
+  if (
+    current.pathname === loc.pathname &&
+    current.search === loc.search &&
+    current.hash === loc.hash
+  ) {
+    return;
+  }
+
   const query = parseQuery(loc.search);
 
   routeState.val = {
@@ -208,7 +238,9 @@ function updateRoute() {
     query,
     hash: loc.hash,
   };
-  currentRoute.val = loc.pathname;
+  if (currentRoute.val !== loc.pathname) {
+    currentRoute.val = loc.pathname;
+  }
 }
 
 if (typeof window !== "undefined") {
@@ -293,14 +325,31 @@ export function RouterView(
     compilePattern(normalized[i].pattern);
   }
 
+  let previousNode = null;
+
   return () => {
     const { pathname, search, query } = routeState.val;
+
+    // Trigger cleanup on unmount of previous component
+    if (previousNode) {
+      if (typeof previousNode._cleanup === "function") {
+        try {
+          previousNode._cleanup();
+        } catch {
+          // Ignore cleanup errors during unmount to prevent crashing router
+        }
+      }
+      previousNode = null;
+    }
+
     const matched = matchRoute(normalized, pathname);
 
     if (!matched) {
-      return fallback({ pathname, search, query });
+      previousNode = fallback({ pathname, search, query });
+      return previousNode;
     }
 
-    return matched.component({ params: matched.params, query });
+    previousNode = matched.component({ params: matched.params, query });
+    return previousNode;
   };
 }

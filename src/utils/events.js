@@ -63,15 +63,19 @@ export function onSafeBackKey(handler) {
  * Detects outside taps/clicks to dismiss popovers or dropdowns.
  */
 export function onOutsideTap(elements, onOutside) {
-  const elementsArray = Array.isArray(elements) ? elements : [elements];
+  const isArr = Array.isArray(elements);
 
   const onDocumentEvent = (e) => {
     const target = e.target;
-    for (let i = 0; i < elementsArray.length; i++) {
-      const el = elementsArray[i];
-      if (el && (el === target || el.contains(target))) {
-        return;
+    if (isArr) {
+      for (let i = 0; i < elements.length; i++) {
+        const el = elements[i];
+        if (el && (el === target || el.contains(target))) {
+          return;
+        }
       }
+    } else if (elements && (elements === target || elements.contains?.(target))) {
+      return;
     }
     onOutside(e);
   };

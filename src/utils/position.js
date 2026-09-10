@@ -8,8 +8,9 @@
  */
 
 const clamp = (val, min, max) => (val < min ? min : val > max ? max : val);
+const EMPTY_OBJECT = Object.freeze({});
 
-export function placeSafePopover(triggerEl, popoverEl, options = {}) {
+export function placeSafePopover(triggerEl, popoverEl, options = EMPTY_OBJECT) {
   const { margin = 8, offset = 6, placement = "bottom" } = options;
 
   const tRect = triggerEl.getBoundingClientRect();

@@ -135,6 +135,12 @@ Strict Subset CSS (Minified)          5.54 KB     1.55 KB     1.28 KB
    - `onSafeTap` ユーティリティでタッチ発火後の合成クリックを安全に抑制。
 5. **クロスレルム・iframe 安全性（`@nkzw(no-instanceof)` 準拠）**:
    - `@nkzw/oxlint-config` のルールに基づき、`instanceof HTMLElement` を排除し `Boolean(node && node.nodeType)` による判定を採用。組込みWebViewやiframe間通信でも型判定が壊れません。
+6. **REST API非同期通信・SWRキャッシュ・ルーター自動クリーンアップ**:
+   - **AbortController による競合排除**: 高速画面遷移時の古い非同期レスポンスによるDOM破壊を100%防止。
+   - **Stale-While-Revalidate**: 有効期限内（TTL）なら0ms即時描画。期限切れ時は古いデータを表示しつつバックグラウンドで最新データを再検証。
+   - **リクエスト重複排除（In-flight Deduplication）**: 複数コンポーネントが同一キーを要求してもHTTP通信は1回に集約。
+   - **参照カウント型ライフサイクル**: 画面がアンマウントされて購読者数が0になると、`window` のフォーカス・オンライン監視リスナーを自動解除。
+   - **RouterView の自動クリーンアップ連動**: ルート切り替え時に前画面の `_cleanup()` を自動実行し、進行中リクエストの中断とメモリ解放を完結。
 
 ---
 
@@ -154,6 +160,10 @@ vanjslightpoc/
 │   ├── open-safari.js               # macOS Safari / サーバー自動起動
 │   └── sync-templates.js            # CLIテンプレート同期スクリプト
 ├── tests/
+│   ├── client.test.js               # REST API クライアント単体テスト (タイムアウト/シグナル連携)
+│   ├── cache.test.js                # インメモリSWRキャッシュ単体テスト (TTL/重複排除/LRU/mutate)
+│   ├── swr.test.js                  # SWR非同期リソース単体テスト (0ms描画/再検証/自動同期)
+│   ├── router-cleanup.test.js       # ルーターアンマウントクリーンアップ単体テスト
 │   ├── position.test.js             # Safe Position Engine 単体テスト (Flip & Clamp)
 │   ├── router.test.js               # Enhanced Router 単体テスト (動的パス/ゼロアロケーションクエリ)
 │   ├── store.test.js                # Global Store 単体テスト (van.state永続化 & リアクティブ派生)
