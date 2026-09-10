@@ -1,0 +1,588 @@
+/* ==========================================================================
+   Every Layout Inspired Minimal CSS for Embedded & Mobile Environments
+   Reference: https://every-layout.dev/rudiments/boxes/
+   Authors/Inspiration: Heydon Pickering & Andy Bell (Every Layout)
+
+   Design Philosophy:
+     1. Rudiments: Everything is a Box (content, padding, border, margin).
+     2. Intrinsic & Contextual: Dimensions derived from content & outer context.
+     3. Lobotomized Owl (* + *): Margins belong to relationships, not elements.
+     4. Algorithmic Layouts: The Stack, The Box, The Center, The Cluster,
+        The Switcher, and The Imposter.
+     5. Embedded-Safe Constraints: Zero gap reliance, No heavy CSS Grid,
+        No backdrop-filter crashes, Stacking context protection.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Rudiments: Box Model & Base Reset
+   -------------------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box; /* Universal Box-sizing rule from Every Layout */
+}
+
+html,
+body,
+#app,
+#app-root {
+  width: 100%;
+  height: 100%;
+}
+
+@supports (height: 100dvh) {
+  html,
+  body,
+  #app,
+  #app-root {
+    height: 100dvh;
+  }
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden; /* Embedded device scroll-lock container rule */
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.5; /* 1.5 text line-height as natural modular baseline */
+  color: #0f172a;
+  background-color: #f8fafc;
+  -webkit-text-size-adjust: 100%;
+}
+
+#app {
+  overflow: hidden;
+}
+
+#app-root {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* --------------------------------------------------------------------------
+   2. Every Layout Primitives
+   -------------------------------------------------------------------------- */
+
+/* --- The Box (.l-box) ---
+   A container that handles padding, border, and background intrinsically. */
+.l-box,
+.c-card {
+  display: block;
+  padding: 1rem;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.l-box--invert {
+  background-color: #1e293b;
+  color: #f8fafc;
+  border-color: #334155;
+}
+
+.l-box--muted {
+  background-color: #f8fafc;
+  border-color: #e2e8f0;
+}
+
+.c-card-header {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.c-card-description {
+  font-size: 13px;
+  color: #64748b;
+  line-height: 1.4;
+  margin-bottom: 12px;
+}
+
+/* --- The Stack (.l-stack) ---
+   Injects vertical margin via Lobotomized Owl (* + *) relationship. */
+.l-stack > * + *,
+.u-space-y > * + * {
+  margin-top: 0.75rem; /* ~12px */
+}
+
+.l-stack--xs > * + *,
+.u-space-y-xs > * + * {
+  margin-top: 0.25rem; /* ~4px */
+}
+
+.l-stack--sm > * + *,
+.u-space-y-sm > * + * {
+  margin-top: 0.5rem; /* ~8px */
+}
+
+.l-stack--lg > * + *,
+.u-space-y-lg > * + * {
+  margin-top: 1.25rem; /* ~20px */
+}
+
+.l-stack--xl > * + * {
+  margin-top: 2rem; /* ~32px */
+}
+
+.l-stack--recursive * + * {
+  margin-top: 0.75rem;
+}
+
+/* --- The Center (.l-center) ---
+   Max-width constraint with intrinsic content-box measurement. */
+.l-center,
+.c-container {
+  box-sizing: content-box; /* Critical Every Layout exception: measures content width */
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+/* --- The Cluster (.l-cluster) ---
+   Groups items horizontally with wrapping and uniform spacing. */
+.l-cluster,
+.c-nav-bar {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.l-cluster > * {
+  margin: 4px;
+}
+
+.l-cluster--between {
+  justify-content: space-between;
+}
+
+.l-cluster--center {
+  justify-content: center;
+}
+
+/* --- The Switcher (.l-switcher) ---
+   Algorithmic responsive switch from horizontal to vertical without media queries. */
+.l-switcher {
+  display: flex;
+  flex-wrap: wrap;
+  margin: -6px;
+}
+
+.l-switcher > *,
+.c-metric-col {
+  flex-grow: 1;
+  flex-basis: calc((35rem - 100%) * 999); /* Switches at ~560px container width */
+  margin: 6px;
+  min-width: 140px;
+}
+
+/* --- The Imposter (.l-imposter) ---
+   Positions an element floating over the viewport/context (Modals/Dialogs). */
+.l-imposter,
+.c-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(15, 23, 42, 0.65); /* Solid rgba fallback for backdrop-filter */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+/* --------------------------------------------------------------------------
+   3. Application Shell & Scroll Containment
+   -------------------------------------------------------------------------- */
+.c-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  height: 52px;
+  min-height: 52px;
+  padding: 0 16px;
+  background-color: #1e293b;
+  color: #ffffff;
+  border-bottom: 1px solid #334155;
+  z-index: 10;
+}
+
+.c-header-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #f8fafc;
+  display: flex;
+  align-items: center;
+}
+
+.c-header-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background-color: #0284c7;
+  color: #ffffff;
+  margin-left: 8px;
+}
+
+.c-nav-bar {
+  background-color: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 0 16px;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.c-nav-item {
+  display: inline-block;
+  padding: 12px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #64748b;
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+}
+
+.c-nav-item:hover,
+.c-nav-item:focus {
+  color: #0f172a;
+}
+
+.c-nav-item.is-active {
+  color: #2563eb;
+  border-bottom: 2px solid #2563eb;
+  font-weight: 600;
+}
+
+.c-main-scroll {
+  flex: 1;
+  min-height: 0; /* Crucial for WebKit/embedded flex containers to enable scrolling */
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 16px 16px 48px;
+}
+
+/* --------------------------------------------------------------------------
+   4. UI Atoms & Components (Box-model Conforming)
+   -------------------------------------------------------------------------- */
+.c-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 4px;
+  border: 1px solid #cbd5e1;
+  background-color: #ffffff;
+  color: #334155;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+}
+
+.c-btn:hover {
+  background-color: #f1f5f9;
+}
+
+.c-btn:active {
+  background-color: #e2e8f0;
+}
+
+.c-btn:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+
+.c-btn-primary {
+  background-color: #2563eb;
+  border-color: #1d4ed8;
+  color: #ffffff;
+}
+
+.c-btn-primary:hover {
+  background-color: #1d4ed8;
+}
+
+.c-btn-primary:active {
+  background-color: #1e40af;
+}
+
+.c-btn-danger {
+  background-color: #dc2626;
+  border-color: #b91c1c;
+  color: #ffffff;
+}
+
+.c-btn-danger:hover {
+  background-color: #b91c1c;
+}
+
+.c-btn-sm {
+  padding: 4px 10px;
+  font-size: 12px;
+}
+
+.c-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 9999px;
+  background-color: #e2e8f0;
+  color: #475569;
+}
+
+.c-badge-success {
+  background-color: #dcfce7;
+  color: #15803d;
+}
+
+.c-badge-warning {
+  background-color: #fef3c7;
+  color: #b45309;
+}
+
+.c-badge-info {
+  background-color: #e0f2fe;
+  color: #0369a1;
+}
+
+/* Modal Dialog Box */
+.c-modal-dialog {
+  background-color: #ffffff;
+  border-radius: 8px;
+  max-width: 480px;
+  width: 100%;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid #cbd5e1;
+}
+
+.c-modal-header {
+  padding: 14px 16px;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 15px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.c-modal-body {
+  padding: 16px;
+  font-size: 13px;
+  color: #334155;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.c-modal-footer {
+  padding: 12px 16px;
+  border-top: 1px solid #e2e8f0;
+  background-color: #f8fafc;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+/* Popover Box */
+.c-popover {
+  position: fixed;
+  background-color: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  padding: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 900;
+  font-size: 13px;
+  color: #334155;
+  min-width: 180px;
+  max-width: 300px;
+}
+
+/* Tabs */
+.c-tabs-header {
+  display: flex;
+  flex-direction: row;
+  border-bottom: 1px solid #e2e8f0;
+  margin-bottom: 14px;
+}
+
+.c-tabs-btn {
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #64748b;
+  border: none;
+  background: none;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  outline: none;
+}
+
+.c-tabs-btn:hover {
+  color: #0f172a;
+}
+
+.c-tabs-btn.is-active {
+  color: #2563eb;
+  font-weight: 600;
+  border-bottom: 2px solid #2563eb;
+}
+
+.c-tabs-content {
+  padding: 4px 0;
+}
+
+/* Toast */
+.c-toast-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1100;
+  display: flex;
+  flex-direction: column;
+  pointer-events: none;
+}
+
+.c-toast {
+  pointer-events: auto;
+  background-color: #1e293b;
+  color: #ffffff;
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.c-toast.is-success {
+  background-color: #15803d;
+}
+
+.c-toast.is-error {
+  background-color: #b91c1c;
+}
+
+/* Metric Boxes & Tables */
+.c-metric-grid {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  margin: -6px;
+}
+
+.c-metric-box {
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 12px;
+  text-align: center;
+}
+
+.c-metric-value {
+  font-size: 20px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.c-metric-label {
+  font-size: 12px;
+  color: #64748b;
+  margin-top: 4px;
+}
+
+.c-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.c-table th,
+.c-table td {
+  padding: 8px 10px;
+  text-align: left;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.c-table th {
+  background-color: #f1f5f9;
+  font-weight: 600;
+  color: #475569;
+}
+
+/* --------------------------------------------------------------------------
+   5. Helper Spacing & Flex Utilities (Backward Compatible)
+   -------------------------------------------------------------------------- */
+.u-space-x > * + * {
+  margin-left: 8px;
+}
+
+.u-space-x-xs > * + * {
+  margin-left: 4px;
+}
+
+.u-space-x-lg > * + * {
+  margin-left: 16px;
+}
+
+.u-flex {
+  display: flex;
+}
+
+.u-flex-row {
+  display: flex;
+  flex-direction: row;
+}
+
+.u-flex-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.u-items-center {
+  align-items: center;
+}
+
+.u-justify-between {
+  justify-content: space-between;
+}
+
+.u-justify-center {
+  justify-content: center;
+}
+
+.u-flex-1 {
+  flex: 1;
+}
+
+.u-flex-wrap {
+  flex-wrap: wrap;
+}

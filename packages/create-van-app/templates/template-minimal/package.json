@@ -1,0 +1,28 @@
+{
+  "name": "my-van-minimal-app",
+  "version": "0.1.0",
+  "description": "Minimal ultra-lightweight VanJS WebApp",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build && node scripts/build-standalone.js",
+    "preview": "vite preview",
+    "lint": "oxlint --config oxlint.config.js src/",
+    "format": "oxfmt --write src/ scripts/",
+    "standalone": "node scripts/build-standalone.js",
+    "safari": "node scripts/open-safari.js",
+    "safari:standalone": "npm run standalone && open -a Safari dist/standalone.html"
+  },
+  "dependencies": {
+    "@nkzw/core": "^1.3.1",
+    "@nkzw/stack": "^2.3.2",
+    "vanjs-core": "^1.6.1"
+  },
+  "devDependencies": {
+    "@nkzw/oxlint-config": "^2.0.1",
+    "esbuild": "^0.28.2",
+    "oxfmt": "^0.67.0",
+    "oxlint": "^1.82.0",
+    "vite": "^8.3.0"
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "name": "create-van-app",
+  "version": "1.0.0",
+  "description": "Ultra-lightweight scaffolding CLI for VanJS WebApps targeting Mobile Safari and Embedded Engines (Cobalt, Webf, Lynx, Servo)",
+  "type": "module",
+  "bin": {
+    "create-van-app": "./bin/index.js",
+    "create-van": "./bin/index.js"
+  },
+  "files": [
+    "bin",
+    "templates",
+    "README.md"
+  ],
+  "keywords": [
+    "create-van-app",
+    "vanjs",
+    "scaffold",
+    "template",
+    "embedded",
+    "vite",
+    "safari",
+    "cobalt",
+    "webf",
+    "lynx",
+    "servo"
+  ],
+  "author": "",
+  "license": "MIT"
+}

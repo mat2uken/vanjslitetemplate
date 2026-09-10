@@ -1,6 +1,6 @@
 {
-  "name": "vanjslightpoc",
-  "version": "1.0.0",
+  "name": "my-van-app",
+  "version": "0.1.0",
   "description": "Ultra-lightweight WebApp PoC targeting Mobile Browsers and Embedded Engines (Cobalt, Webf, Lynx, Servo)",
   "type": "module",
   "scripts": {
@@ -18,9 +18,7 @@
     "size": "node scripts/analyze-size.js",
     "standalone": "node scripts/build-standalone.js",
     "safari": "node scripts/open-safari.js",
-    "safari:standalone": "npm run standalone && open -a Safari dist/standalone.html",
-    "create": "node packages/create-van-app/bin/index.js",
-    "sync:templates": "node scripts/sync-templates.js"
+    "safari:standalone": "npm run standalone && open -a Safari dist/standalone.html"
   },
   "keywords": [
     "vanjs",
