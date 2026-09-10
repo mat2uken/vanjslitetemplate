@@ -13,7 +13,19 @@
  *  - Stack Layout Components (@nkzw/stack inspired)
  */
 export { default as van, state, derive, tags } from "./core/van.js";
-export { currentRoute, navigate, RouterView } from "./core/router.js";
+export {
+  currentRoute,
+  routeState,
+  navigate,
+  Link,
+  matchRoute,
+  parseQuery,
+  compilePattern,
+  RouterView,
+  setRouterMode,
+  getRouterMode,
+} from "./core/router.js";
+export { authStore, createStore } from "./core/store.js";
 export { placeSafePopover } from "./utils/position.js";
 export { onSafeTap, onSafeBackKey, onOutsideTap } from "./utils/events.js";
 export { mountPortal } from "./components/portal.js";

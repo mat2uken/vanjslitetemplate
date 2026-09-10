@@ -4,6 +4,8 @@ import { HomePage } from "./pages/HomePage.js";
 import { ComponentsPage } from "./pages/ComponentsPage.js";
 import { LayoutPage } from "./pages/LayoutPage.js";
 import { BenchmarkPage } from "./pages/BenchmarkPage.js";
+import { StatePage } from "./pages/StatePage.js";
+import { authStore } from "./core/store.js";
 import "./styles/subset.css";
 
 const { a, div, header, main, nav, span } = van.tags;
@@ -13,6 +15,8 @@ const routes = {
   "/benchmark": BenchmarkPage,
   "/components": ComponentsPage,
   "/layout": LayoutPage,
+  "/state": StatePage,
+  "/state/users/:id": StatePage,
 };
 
 function App() {
@@ -20,6 +24,7 @@ function App() {
     { label: "概要 (Home)", path: "/" },
     { label: "UIコンポーネント", path: "/components" },
     { label: "CSSレイアウト", path: "/layout" },
+    { label: "状態 & ルーティング", path: "/state" },
     { label: "ベンチマーク", path: "/benchmark" },
   ];
 
@@ -30,9 +35,20 @@ function App() {
     header(
       { class: "c-header" },
       div(
-        { class: "c-header-title" },
-        "VanJS Light WebApp",
-        span({ class: "c-header-badge" }, "PoC v1.0"),
+        { class: "u-flex u-items-center u-space-x-sm" },
+        div(
+          { class: "c-header-title" },
+          "VanJS Light WebApp",
+          span({ class: "c-header-badge" }, "PoC v1.0"),
+        ),
+        // Reactive global store status in header
+        () =>
+          authStore.isAuthenticated.val
+            ? span(
+                { class: "c-badge c-badge-success", style: "font-size: 11px;" },
+                `👤 ${authStore.user.val?.name || ""}`,
+              )
+            : span(""),
       ),
       div({ style: "font-size: 12px; color: #94a3b8;" }, "Cobalt / Webf / Lynx / Servo Safe"),
     ),
@@ -43,8 +59,14 @@ function App() {
       navItems.map((item) =>
         a(
           {
-            class: () =>
-              `c-nav-item ${currentRoute.val === item.path || (item.path === "/" && !currentRoute.val) ? "is-active" : ""}`,
+            class: () => {
+              const cur = currentRoute.val || "/";
+              const isActive =
+                cur === item.path ||
+                (item.path === "/" && cur === "/") ||
+                (item.path !== "/" && cur.startsWith(item.path));
+              return `c-nav-item ${isActive ? "is-active" : ""}`;
+            },
             href: `#${item.path}`,
             onclick: (e) => {
               e.preventDefault();
