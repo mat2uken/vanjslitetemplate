@@ -19,7 +19,7 @@ async function buildStandalone() {
     minify: true,
     format: "iife",
     target: "es2018",
-    external: ["*.css"],
+    loader: { ".css": "empty" },
     write: false,
   });
   const jsCode = jsResult.outputFiles[0].text;

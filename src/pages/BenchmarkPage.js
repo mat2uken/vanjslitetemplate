@@ -42,8 +42,8 @@ export function BenchmarkPage() {
       return;
     }
     const t0 = performance.now();
-    // Use @nkzw/core sortBy
-    const sorted = sortBy(itemsState.val, (item) => -item.val);
+    // Clone array so VanJS detects reference change and triggers reactive DOM update
+    const sorted = sortBy([...itemsState.val], (item) => -item.val);
     itemsState.val = sorted;
 
     requestAnimationFrame(() => {

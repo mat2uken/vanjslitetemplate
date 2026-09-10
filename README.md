@@ -107,10 +107,21 @@ vanjslightpoc/
 │   ├── analyze-size.js              # モジュール別・全体サイズの自動計測スクリプト
 │   └── build-standalone.js          # 組込みエンジン直接インジェクション用単一HTML生成
 ├── tests/
-│   ├── position.test.js             # Safe Position Engine 単体テスト
-│   ├── router.test.js               # Hash Router 単体テスト
+│   ├── position.test.js             # Safe Position Engine 単体テスト (Flip & Clamp)
+│   ├── router.test.js               # Hash Router 単体テスト (同期・非同期ルーティング)
 │   ├── stack.test.js                # @nkzw/stack 互換コンポーネント単体テスト
-│   └── core.test.js                 # @nkzw/core ユーティリティ連携テスト
+│   ├── core.test.js                 # @nkzw/core ユーティリティ連携テスト
+│   ├── modal.test.js                # Portal Modal 単体テスト (A11y/ESC/Backdrop)
+│   ├── popover.test.js              # Safe Popover 単体テスト (Light Dismiss/ESC)
+│   ├── tabs.test.js                 # Tabs & Accordion 単体テスト (van.state駆動)
+│   ├── toast.test.js                # Toast 通知単体テスト (自動破棄)
+│   └── events.test.js               # 組込みイベント単体テスト (STBリモコンBack/GhostClick)
+├── e2e/
+│   ├── home.spec.js                 # ホーム画面・メトリクス・ナビゲーション E2E
+│   ├── components.spec.js           # Modal・Popover・Tabs・Accordion・Toast 実機 E2E
+│   ├── layout.spec.js               # Subset CSS & Stack レイアウト実機 E2E
+│   ├── benchmark.spec.js            # Direct DOM 100件生成 & sortBy ソート実機 E2E
+│   └── standalone.spec.js           # 単一自己完結HTML (file://) Safari 実機 E2E
 └── src/
     ├── main.js                      # アプリケーション初期化・ルーティングマウント
     ├── bundle-core.js               # コアフレームワーク層（サイズ測定用エントリ）
@@ -138,25 +149,45 @@ vanjslightpoc/
 
 ---
 
-## 4. コマンドリファレンス
+## 4. テスト & Safari 実機検証コマンド
 
+### 4.1 テストスイートの実行
 ```bash
-# 1. テスト実行 (Vitest: happy-dom)
-npm test
+# 1. ユニットテスト実行 (Vitest: happy-dom)
+# -> 9 テストファイル / 25 テスト全合格 (~500ms)
+npm run test:unit
 
-# 2. 超高速 Lint (Oxlint + @nkzw/oxlint-config)
+# 2. E2E テスト実行 (Playwright: WebKit デスクトップ Safari & Mobile Safari)
+# -> 32 テスト全合格 (~8s)
+npm run test:e2e
+
+# 3. ユニットテスト + E2E テストの一括実行
+npm run test:all
+
+# 4. 超高速 Lint (Oxlint + @nkzw/oxlint-config)
 npm run lint
 
-# 3. 超高速 フォーマット (Oxfmt)
+# 5. 超高速 フォーマット (Oxfmt)
 npm run format
 npm run format:check
+```
 
-# 4. 開発サーバー起動 (Vite)
+### 4.2 macOS Safari 実機での直接プレビュー
+```bash
+# 開発サーバーを起動し、macOS Safari で開く
 npm run dev
+# 別ターミナルまたはブラウザで
+npm run safari          # http://localhost:3000 を Safari で起動
 
-# 5. プロダクションビルド & 単一HTML生成 (Rolldown / Oxc)
+# 単一スタンドアローンHTML（組込み向けファイル）を Safari で直接開く
+npm run safari:standalone  # dist/standalone.html を file:// で Safari 起動
+```
+
+### 4.3 ビルド & バンドルサイズ測定
+```bash
+# プロダクションビルド & 単一HTML生成 (Rolldown / Oxc)
 npm run build
 
-# 6. サイズ・バジェット自動計測 (zlib gzip/brotli)
+# サイズ・バジェット自動計測 (zlib gzip/brotli)
 npm run size
 ```

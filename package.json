@@ -8,11 +8,17 @@
     "build": "vite build && node scripts/build-standalone.js",
     "preview": "vite preview",
     "test": "vitest run",
-    "lint": "oxlint --config oxlint.config.js src/ tests/",
-    "format": "oxfmt --write src/ scripts/ tests/",
-    "format:check": "oxfmt --check src/ scripts/ tests/",
+    "test:unit": "vitest run",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:all": "vitest run && playwright test",
+    "lint": "oxlint --config oxlint.config.js src/ tests/ e2e/",
+    "format": "oxfmt --write src/ scripts/ tests/ e2e/",
+    "format:check": "oxfmt --check src/ scripts/ tests/ e2e/",
     "size": "node scripts/analyze-size.js",
-    "standalone": "node scripts/build-standalone.js"
+    "standalone": "node scripts/build-standalone.js",
+    "safari": "open -a Safari http://localhost:3000",
+    "safari:standalone": "open -a Safari dist/standalone.html"
   },
   "keywords": [
     "vanjs",
@@ -33,6 +39,7 @@
   },
   "devDependencies": {
     "@nkzw/oxlint-config": "^2.0.1",
+    "@playwright/test": "^1.63.0",
     "esbuild": "^0.28.2",
     "happy-dom": "^20.14.3",
     "oxfmt": "^0.67.0",

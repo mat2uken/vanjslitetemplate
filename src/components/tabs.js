@@ -32,7 +32,7 @@ export function createTabs(tabs, defaultTabId = tabs[0]?.id) {
         ? typeof current.content === "function"
           ? current.content()
           : current.content
-        : null;
+        : "";
     }),
   );
 }
@@ -58,6 +58,6 @@ export function createAccordionItem(title, content, defaultOpen = false) {
     () =>
       isOpen.val
         ? div({ style: "padding: 14px 16px; border-top: 1px solid #e2e8f0;" }, content)
-        : null,
+        : "",
   );
 }
