@@ -9,17 +9,9 @@ const isLoading = van.state(false);
 const isAuthenticated = van.derive(() => user.val !== null);
 
 export const authStore = {
-  get user() {
-    return user;
-  },
-  get isLoading() {
-    return isLoading;
-  },
-
-  // Derived reactive property (singleton)
-  get isAuthenticated() {
-    return isAuthenticated;
-  },
+  user,
+  isLoading,
+  isAuthenticated,
 
   // Actions
   login: async (name = "Taro") => {

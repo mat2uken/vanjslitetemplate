@@ -18,8 +18,13 @@ export function openModal({
 }) {
   let unmountPortalFn = null;
   let removeKeyHandler = null;
+  let focusTimer = null;
 
   function cleanup() {
+    if (focusTimer) {
+      clearTimeout(focusTimer);
+      focusTimer = null;
+    }
     if (removeKeyHandler) {
       removeKeyHandler();
       removeKeyHandler = null;
@@ -100,8 +105,9 @@ export function openModal({
   removeKeyHandler = onSafeBackKey(close);
 
   // Auto focus OK button for Smart TV / Keyboard navigation (zero-lookup direct focus)
-  setTimeout(() => {
+  focusTimer = setTimeout(() => {
     okBtn.focus();
+    focusTimer = null;
   }, 30);
 
   return { close };

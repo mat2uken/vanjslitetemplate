@@ -8,11 +8,12 @@
  */
 export function onSafeTap(element, handler) {
   let touchHandled = false;
+  let timer = null;
 
   const onTouchEnd = (e) => {
     touchHandled = true;
     handler(e);
-    setTimeout(() => {
+    timer = setTimeout(() => {
       touchHandled = false;
     }, 400);
   };
@@ -27,6 +28,9 @@ export function onSafeTap(element, handler) {
   element.addEventListener("click", onClick);
 
   return () => {
+    if (timer) {
+      clearTimeout(timer);
+    }
     element.removeEventListener("touchend", onTouchEnd);
     element.removeEventListener("click", onClick);
   };

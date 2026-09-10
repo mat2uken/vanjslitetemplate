@@ -41,7 +41,7 @@ const SPACING_CLASS_MAP = {
 
 function isChild(val) {
   return (
-    Boolean(val && val.nodeType) ||
+    Boolean(val?.nodeType) ||
     typeof val === "string" ||
     typeof val === "function" ||
     Array.isArray(val)

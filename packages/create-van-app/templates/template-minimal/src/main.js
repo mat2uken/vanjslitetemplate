@@ -1,10 +1,10 @@
 import van from "./core/van.js";
 import { RouterView, Link, navigate } from "./core/router.js";
 import { authStore } from "./store.js";
-import { HStack, VStack } from "./components/stack.js";
+import { HStack } from "./components/stack.js";
 import "./styles/subset.css";
 
-const { a, button, div, header, main, nav, p, span, strong } = van.tags;
+const { button, div, header, main, p, span, strong } = van.tags;
 
 function HomePage() {
   const count = van.state(0);

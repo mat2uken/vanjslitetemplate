@@ -54,9 +54,7 @@ export function createAccordionItem(title, content, defaultOpen = false) {
     button(
       {
         class: "c-btn",
-        onclick: () => {
-          isOpen.val = !isOpen.val;
-        },
+        onclick: () => (isOpen.val = !isOpen.val),
         style:
           "width: 100%; border: none; border-radius: 0; display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background-color: #f8fafc; font-weight: 600;",
       },
