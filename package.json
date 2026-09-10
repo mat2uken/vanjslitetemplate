@@ -1,0 +1,43 @@
+{
+  "name": "vanjslightpoc",
+  "version": "1.0.0",
+  "description": "Ultra-lightweight WebApp PoC targeting Mobile Browsers and Embedded Engines (Cobalt, Webf, Lynx, Servo)",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build && node scripts/build-standalone.js",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "lint": "oxlint --config oxlint.config.js src/ tests/",
+    "format": "oxfmt --write src/ scripts/ tests/",
+    "format:check": "oxfmt --check src/ scripts/ tests/",
+    "size": "node scripts/analyze-size.js",
+    "standalone": "node scripts/build-standalone.js"
+  },
+  "keywords": [
+    "vanjs",
+    "embedded",
+    "cobalt",
+    "webf",
+    "lynx",
+    "servo",
+    "ultra-lightweight",
+    "spa"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@nkzw/core": "^1.3.1",
+    "@nkzw/stack": "^2.3.2",
+    "vanjs-core": "^1.6.1"
+  },
+  "devDependencies": {
+    "@nkzw/oxlint-config": "^2.0.1",
+    "esbuild": "^0.28.2",
+    "happy-dom": "^20.14.3",
+    "oxfmt": "^0.67.0",
+    "oxlint": "^1.82.0",
+    "vite": "^8.3.0",
+    "vitest": "^4.1.11"
+  }
+}
