@@ -10,17 +10,46 @@ export function LayoutPage() {
     // Header
     div(
       { class: "u-flex u-justify-between u-items-center" },
-      h2({ style: "margin: 0; font-size: 18px;" }, "Strict Subset CSS & Stack レイアウト検証"),
-      span({ class: "c-badge c-badge-warning" }, "No gap / No Grid / Pure CSS"),
+      h2({ style: "margin: 0; font-size: 18px;" }, "Every Layout 準拠: Boxes & Layout Primitives"),
+      span({ class: "c-badge c-badge-success" }, "every-layout.dev Inspired"),
     ),
 
-    // Stack Component Demo (@nkzw/stack inspired)
+    // 1. Every Layout: The Box & Invert
     div(
       { class: "c-card u-space-y" },
-      div({ class: "c-card-header" }, "1. @nkzw/stack 互換: 組込みセーフ Stack コンポーネント"),
+      div({ class: "c-card-header" }, "1. The Box (.l-box) & Intrinsic Sizing"),
       p(
         { class: "c-card-description" },
-        "@nkzw/stack の「ゼロ依存・型安全なFlexbox抽象化」思想をVanJSに移植。CobaltやWebfで gap が使えない制約を、隣接セレクタ・マージンフォールバックで完全透過的に解決します。",
+        "Every Layout の Boxes 原則: 「デザインのすべては Box である」。過剰な width: 100% を指定せず、inline-size: auto と border-box により内包コンテンツと外側コンテキストから自然に寸法を決定します。",
+      ),
+      div(
+        { class: "u-flex u-space-x" },
+        div(
+          { class: "l-box", style: "flex: 1;" },
+          strong("Standard Box"),
+          p(
+            { style: "margin: 4px 0 0 0; font-size: 12px; color: #64748b;" },
+            "Padding + Border + Intrinsic content",
+          ),
+        ),
+        div(
+          { class: "l-box l-box--invert", style: "flex: 1;" },
+          strong("Invert Box"),
+          p(
+            { style: "margin: 4px 0 0 0; font-size: 12px; color: #94a3b8;" },
+            "High-contrast dark container",
+          ),
+        ),
+      ),
+    ),
+
+    // 2. Every Layout: The Stack & The Cluster
+    div(
+      { class: "c-card u-space-y" },
+      div({ class: "c-card-header" }, "2. The Stack (.l-stack) & The Cluster (.l-cluster)"),
+      p(
+        { class: "c-card-description" },
+        "The Stack は Lobotomized Owl (* + *) により親コンテキストから要素間に余白を注入。The Cluster は要素群を均一に折り返し配置します。",
       ),
       VStack(
         { spacing: 8, style: "background-color: #f1f5f9; padding: 12px; border-radius: 6px;" },
@@ -61,16 +90,16 @@ export function LayoutPage() {
       ),
     ),
 
-    // Grid-less Multi-column Demo
+    // 3. Every Layout: The Switcher (Algorithmic Breakpoint)
     div(
       { class: "c-card u-space-y" },
-      div({ class: "c-card-header" }, "2. CSS Grid 代替のネスト Flexbox レスポンシブ配置"),
+      div({ class: "c-card-header" }, "3. The Switcher (.l-switcher) - メディアクエリレス切り替え"),
       p(
         { class: "c-card-description" },
-        "WebfやCobalt等では display: grid が未実装です。すべて flex-direction: row / column のネストと flex-wrap, 負の親マージン + 子パディングで完全なマルチカラムグリッドを再現します。",
+        "Every Layout 特有のアルゴリズム設計: flex-basis: calc((35rem - 100%) * 999) を活用し、コンテナ幅が閾値を下回るとメディアクエリ不要で自動的に縦積みに切り替わります。",
       ),
       div(
-        { class: "c-metric-grid" },
+        { class: "l-switcher" },
         [1, 2, 3, 4].map((e) =>
           div(
             { class: "c-metric-col" },
@@ -79,7 +108,7 @@ export function LayoutPage() {
               div({ style: "color: #1e293b; font-weight: 700;" }, `カード ${e}`),
               div(
                 { style: "color: #64748b; font-size: 12px; margin-top: 4px;" },
-                "Flexboxネスト構成",
+                "Switcherアルゴリズム",
               ),
             ),
           ),
@@ -87,10 +116,10 @@ export function LayoutPage() {
       ),
     ),
 
-    // Fixed Scroll Bug Mitigation Demo
+    // 4. Fixed Scroll Bug Mitigation
     div(
       { class: "c-card u-space-y" },
-      div({ class: "c-card-header" }, "3. position: fixed スクロール追従バグの完全回避"),
+      div({ class: "c-card-header" }, "4. position: fixed スクロール追従バグの完全回避"),
       p(
         { class: "c-card-description" },
         "組込みエンジンでは、html/bodyスクロール時に fixed ヘッダーやモーダルが揺れたり、描画から脱落するバグが多発します。",
@@ -107,49 +136,49 @@ export function LayoutPage() {
       ),
     ),
 
-    // Rule Check Matrix
+    // 5. Rule Check Matrix
     div(
       { class: "c-card" },
-      div({ class: "c-card-header" }, "Strict Subset CSS 制約チェックリスト"),
+      div({ class: "c-card-header" }, "Strict Subset CSS & Every Layout 制約チェックリスト"),
       table(
         { class: "c-table" },
         thead(
           van.tags.tr(
-            th("CSS機能"),
+            th("Every Layout / CSS"),
             th("組込みでのリスク"),
-            th("本PoCでの代替アプローチ"),
+            th("本PoCでの採用アプローチ"),
             th("判定"),
           ),
         ),
         tbody(
           van.tags.tr(
-            td("gap"),
-            td("Cobalt/旧Safariで無視される"),
-            td("* + * 隣接マージン / Stack fallback"),
+            td("The Stack (gap代替)"),
+            td("Cobalt/旧Safariでgap無視"),
+            td("* + * Lobotomized Owl マージン注入"),
             td(span({ class: "c-badge c-badge-success" }, "クリア")),
           ),
           van.tags.tr(
-            td("CSS Grid"),
-            td("Webf/Cobaltでパースエラー・無効"),
-            td("Flexboxネスト + flex-wrap"),
+            td("The Switcher (Grid代替)"),
+            td("Webf/CobaltでGrid未対応"),
+            td("flex-basis calc((35rem - 100%) * 999)"),
             td(span({ class: "c-badge c-badge-success" }, "クリア")),
           ),
           van.tags.tr(
-            td("CSS Variables (var)"),
-            td("再計算コスト・古いエンジン未対応"),
-            td("ビルド時解決または直接カラー指定"),
+            td("The Center (コンテンツ幅)"),
+            td("コンテナパディング溢れ"),
+            td("box-sizing: content-box + margin-inline: auto"),
             td(span({ class: "c-badge c-badge-success" }, "クリア")),
           ),
           van.tags.tr(
-            td("backdrop-filter"),
-            td("GPU負荷増大・黒塗りバグ"),
-            td("rgba(15, 23, 42, 0.65) 半透明ベタ"),
+            td("The Imposter (Modal)"),
+            td("fixed要素のスクロール脱落"),
+            td("Portal + body直下マウント + inset: 0"),
             td(span({ class: "c-badge c-badge-success" }, "クリア")),
           ),
           van.tags.tr(
-            td("::before / ::after"),
-            td("ネイティブブリッジでノード脱落"),
-            td("明示的な span / div タグを配置"),
+            td("The Box (装飾・擬似要素)"),
+            td("ネイティブブリッジで疑似要素脱落"),
+            td("純粋な実DOMスパンとborder/padding"),
             td(span({ class: "c-badge c-badge-success" }, "クリア")),
           ),
         ),

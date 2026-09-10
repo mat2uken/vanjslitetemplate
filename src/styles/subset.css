@@ -1,20 +1,25 @@
 /* ==========================================================================
-   Strict Subset CSS for Embedded & Mobile Environments
-   Targets: Mobile Chrome/Safari, Cobalt, Webf, Lynx, Servo, miniblink
-   Rules:
-     - NO Flexbox gap (use margin on adjacent children: * + *)
-     - NO CSS Grid (use nested flex rows/cols)
-     - NO CSS Variables (use direct values for 100% parser compatibility)
-     - NO backdrop-filter / filter (use solid or rgba() backgrounds)
-     - NO ::before / ::after pseudo elements for content (use explicit DOM elements)
-     - Viewport fixed container with inner scroll to prevent fixed scroll bugs
+   Every Layout Inspired Minimal CSS for Embedded & Mobile Environments
+   Reference: https://every-layout.dev/rudiments/boxes/
+   Authors/Inspiration: Heydon Pickering & Andy Bell (Every Layout)
+
+   Design Philosophy:
+     1. Rudiments: Everything is a Box (content, padding, border, margin).
+     2. Intrinsic & Contextual: Dimensions derived from content & outer context.
+     3. Lobotomized Owl (* + *): Margins belong to relationships, not elements.
+     4. Algorithmic Layouts: The Stack, The Box, The Center, The Cluster,
+        The Switcher, and The Imposter.
+     5. Embedded-Safe Constraints: Zero gap reliance, No heavy CSS Grid,
+        No backdrop-filter crashes, Stacking context protection.
    ========================================================================== */
 
-/* --- Base Reset & Box Sizing --- */
+/* --------------------------------------------------------------------------
+   1. Rudiments: Box Model & Base Reset
+   -------------------------------------------------------------------------- */
 *,
 *::before,
 *::after {
-  box-sizing: border-box;
+  box-sizing: border-box; /* Universal Box-sizing rule from Every Layout */
 }
 
 html,
@@ -23,16 +28,15 @@ body {
   padding: 0;
   width: 100%;
   height: 100%;
-  overflow: hidden; /* Avoid window-level scroll bugs on embedded engines */
+  overflow: hidden; /* Embedded device scroll-lock container rule */
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   font-size: 14px;
-  line-height: 1.5;
+  line-height: 1.5; /* 1.5 text line-height as natural modular baseline */
   color: #0f172a;
   background-color: #f8fafc;
   -webkit-text-size-adjust: 100%;
 }
 
-/* --- App Shell Container --- */
 #app-root {
   display: flex;
   flex-direction: column;
@@ -41,6 +45,153 @@ body {
   overflow: hidden;
 }
 
+/* --------------------------------------------------------------------------
+   2. Every Layout Primitives
+   -------------------------------------------------------------------------- */
+
+/* --- The Box (.l-box) ---
+   A container that handles padding, border, and background intrinsically. */
+.l-box,
+.c-card {
+  display: block;
+  padding: 1rem;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.l-box--invert {
+  background-color: #1e293b;
+  color: #f8fafc;
+  border-color: #334155;
+}
+
+.l-box--muted {
+  background-color: #f8fafc;
+  border-color: #e2e8f0;
+}
+
+.c-card-header {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.c-card-description {
+  font-size: 13px;
+  color: #64748b;
+  line-height: 1.4;
+  margin-bottom: 12px;
+}
+
+/* --- The Stack (.l-stack) ---
+   Injects vertical margin via Lobotomized Owl (* + *) relationship. */
+.l-stack > * + *,
+.u-space-y > * + * {
+  margin-top: 0.75rem; /* ~12px */
+}
+
+.l-stack--xs > * + *,
+.u-space-y-xs > * + * {
+  margin-top: 0.25rem; /* ~4px */
+}
+
+.l-stack--sm > * + *,
+.u-space-y-sm > * + * {
+  margin-top: 0.5rem; /* ~8px */
+}
+
+.l-stack--lg > * + *,
+.u-space-y-lg > * + * {
+  margin-top: 1.25rem; /* ~20px */
+}
+
+.l-stack--xl > * + * {
+  margin-top: 2rem; /* ~32px */
+}
+
+.l-stack--recursive * + * {
+  margin-top: 0.75rem;
+}
+
+/* --- The Center (.l-center) ---
+   Max-width constraint with intrinsic content-box measurement. */
+.l-center,
+.c-container {
+  box-sizing: content-box; /* Critical Every Layout exception: measures content width */
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+/* --- The Cluster (.l-cluster) ---
+   Groups items horizontally with wrapping and uniform spacing. */
+.l-cluster,
+.c-nav-bar {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.l-cluster > * {
+  margin: 4px;
+}
+
+.l-cluster--between {
+  justify-content: space-between;
+}
+
+.l-cluster--center {
+  justify-content: center;
+}
+
+/* --- The Switcher (.l-switcher) ---
+   Algorithmic responsive switch from horizontal to vertical without media queries. */
+.l-switcher {
+  display: flex;
+  flex-wrap: wrap;
+  margin: -6px;
+}
+
+.l-switcher > *,
+.c-metric-col {
+  flex-grow: 1;
+  flex-basis: calc((35rem - 100%) * 999); /* Switches at ~560px container width */
+  margin: 6px;
+  min-width: 140px;
+}
+
+/* --- The Imposter (.l-imposter) ---
+   Positions an element floating over the viewport/context (Modals/Dialogs). */
+.l-imposter,
+.c-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(15, 23, 42, 0.65); /* Solid rgba fallback for backdrop-filter */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+/* --------------------------------------------------------------------------
+   3. Application Shell & Scroll Containment
+   -------------------------------------------------------------------------- */
 .c-header {
   display: flex;
   flex-direction: row;
@@ -75,8 +226,6 @@ body {
 }
 
 .c-nav-bar {
-  display: flex;
-  flex-direction: row;
   background-color: #ffffff;
   border-bottom: 1px solid #e2e8f0;
   padding: 0 16px;
@@ -106,7 +255,6 @@ body {
   font-weight: 600;
 }
 
-/* --- Main Content Scroll Area --- */
 .c-main-scroll {
   flex: 1;
   overflow-y: auto;
@@ -114,94 +262,9 @@ body {
   padding: 16px;
 }
 
-.c-container {
-  width: 100%;
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-/* --- Utility Spacing (No gap replacement) --- */
-.u-space-y > * + * {
-  margin-top: 12px;
-}
-
-.u-space-y-sm > * + * {
-  margin-top: 6px;
-}
-
-.u-space-y-lg > * + * {
-  margin-top: 20px;
-}
-
-.u-space-x > * + * {
-  margin-left: 8px;
-}
-
-.u-space-x-lg > * + * {
-  margin-left: 16px;
-}
-
-.u-flex {
-  display: flex;
-}
-
-.u-flex-row {
-  display: flex;
-  flex-direction: row;
-}
-
-.u-flex-col {
-  display: flex;
-  flex-direction: column;
-}
-
-.u-items-center {
-  align-items: center;
-}
-
-.u-justify-between {
-  justify-content: space-between;
-}
-
-.u-justify-center {
-  justify-content: center;
-}
-
-.u-flex-1 {
-  flex: 1;
-}
-
-.u-flex-wrap {
-  flex-wrap: wrap;
-}
-
-/* --- UI Component: Card --- */
-.c-card {
-  background-color: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 6px;
-  padding: 16px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-}
-
-.c-card-header {
-  font-size: 15px;
-  font-weight: 700;
-  color: #1e293b;
-  margin-bottom: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.c-card-description {
-  font-size: 13px;
-  color: #64748b;
-  line-height: 1.4;
-  margin-bottom: 12px;
-}
-
-/* --- UI Component: Buttons --- */
+/* --------------------------------------------------------------------------
+   4. UI Atoms & Components (Box-model Conforming)
+   -------------------------------------------------------------------------- */
 .c-btn {
   display: inline-flex;
   align-items: center;
@@ -227,7 +290,6 @@ body {
   background-color: #e2e8f0;
 }
 
-/* Remote / Keyboard focus for STB / TV */
 .c-btn:focus-visible {
   outline: 2px solid #2563eb;
   outline-offset: 2px;
@@ -262,7 +324,6 @@ body {
   font-size: 12px;
 }
 
-/* --- UI Component: Badge --- */
 .c-badge {
   display: inline-block;
   padding: 2px 8px;
@@ -288,23 +349,7 @@ body {
   color: #0369a1;
 }
 
-/* --- UI Component: Modal (Portal based) --- */
-.c-modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(15, 23, 42, 0.65); /* No backdrop-filter */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  padding: 16px;
-}
-
+/* Modal Dialog Box */
 .c-modal-dialog {
   background-color: #ffffff;
   border-radius: 8px;
@@ -345,9 +390,9 @@ body {
   justify-content: flex-end;
 }
 
-/* --- UI Component: Popover (Portal based) --- */
+/* Popover Box */
 .c-popover {
-  position: fixed; /* Position calculated by Safe Position Engine */
+  position: fixed;
   background-color: #ffffff;
   border: 1px solid #cbd5e1;
   border-radius: 6px;
@@ -360,7 +405,7 @@ body {
   max-width: 300px;
 }
 
-/* --- UI Component: Tabs --- */
+/* Tabs */
 .c-tabs-header {
   display: flex;
   flex-direction: row;
@@ -394,7 +439,7 @@ body {
   padding: 4px 0;
 }
 
-/* --- UI Component: Toast Notification --- */
+/* Toast */
 .c-toast-container {
   position: fixed;
   bottom: 20px;
@@ -428,18 +473,12 @@ body {
   background-color: #b91c1c;
 }
 
-/* --- Stat and Table Widgets --- */
+/* Metric Boxes & Tables */
 .c-metric-grid {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   margin: -6px;
-}
-
-.c-metric-col {
-  flex: 1;
-  min-width: 140px;
-  padding: 6px;
 }
 
 .c-metric-box {
@@ -479,4 +518,53 @@ body {
   background-color: #f1f5f9;
   font-weight: 600;
   color: #475569;
+}
+
+/* --------------------------------------------------------------------------
+   5. Helper Spacing & Flex Utilities (Backward Compatible)
+   -------------------------------------------------------------------------- */
+.u-space-x > * + * {
+  margin-left: 8px;
+}
+
+.u-space-x-xs > * + * {
+  margin-left: 4px;
+}
+
+.u-space-x-lg > * + * {
+  margin-left: 16px;
+}
+
+.u-flex {
+  display: flex;
+}
+
+.u-flex-row {
+  display: flex;
+  flex-direction: row;
+}
+
+.u-flex-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.u-items-center {
+  align-items: center;
+}
+
+.u-justify-between {
+  justify-content: space-between;
+}
+
+.u-justify-center {
+  justify-content: center;
+}
+
+.u-flex-1 {
+  flex: 1;
+}
+
+.u-flex-wrap {
+  flex-wrap: wrap;
 }
