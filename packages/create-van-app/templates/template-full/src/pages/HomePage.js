@@ -3,6 +3,66 @@ import { navigate } from "../core/router.js";
 
 const { button, div, h2, li, p, span, strong, table, tbody, td, th, thead, tr, ul } = van.tags;
 
+const ARCHITECTURE_ROWS = [
+  {
+    badgeClass: "c-badge c-badge-success",
+    layer: "View Layer",
+    measured: "1.55 KB",
+    method: "Strict Pure CSS",
+    notes: "gap・Grid・CSS変数不使用。Margin隣接セレクタで代替",
+    target: "1〜2 KB",
+  },
+  {
+    badgeClass: "c-badge c-badge-info",
+    layer: "Core Runtime",
+    measured: "1.26 KB",
+    method: "VanJS (vanjs-core 1.6)",
+    notes: "直接DOM生成。仮想DOMなし、DOM Level 1/2互換",
+    target: "約 0.9 KB",
+  },
+  {
+    badgeClass: "c-badge c-badge-success",
+    layer: "Position Engine",
+    measured: "0.35 KB",
+    method: "自作 placeSafePopover",
+    notes: "四則演算+ClampでFloating UI(3.5~5KB)を完全代替",
+    target: "約 0.2 KB",
+  },
+  {
+    badgeClass: "c-badge c-badge-success",
+    layer: "Event & Back Key",
+    measured: "0.41 KB",
+    method: "onSafeTap / onSafeBackKey",
+    notes: "Touch/Click調停、Smart TVリモコンBackキー対応",
+    target: "—",
+  },
+  {
+    badgeClass: "c-badge c-badge-warning",
+    layer: "UI Components",
+    measured: "1.87 KB (複合)",
+    method: "Portal, Modal, Popover, Tabs, Toast",
+    notes: "Top-layer (<dialog>) 非依存。個別unmountでリーク完全防止",
+    target: "約 0.3 KB (Portalのみ)",
+  },
+  {
+    badgeClass: "c-badge c-badge-success",
+    layer: "Router",
+    measured: "0.17 KB",
+    method: "Hash Router (van.state)",
+    notes: "hashchangeイベント駆動、外部ライブラリ不要",
+    target: "約 15 行",
+  },
+  {
+    badgeClass: "c-badge c-badge-info",
+    isTotal: true,
+    layer: "合計ランタイム",
+    measured: "3.23 KB",
+    method: "Model-C 改 (Full Runtime)",
+    notes: "実務運用可能なフルセットSPAランタイムとして極小",
+    target: "約 1.3〜1.6 KB",
+  },
+];
+
 export function HomePage() {
   return div(
     { class: "c-container u-space-y-lg" },
@@ -113,54 +173,18 @@ export function HomePage() {
           ),
         ),
         tbody(
-          tr(
-            td(strong("View Layer")),
-            td("Strict Pure CSS"),
-            td("1〜2 KB"),
-            td(span({ class: "c-badge c-badge-success" }, "1.55 KB")),
-            td("gap・Grid・CSS変数不使用。Margin隣接セレクタで代替"),
-          ),
-          tr(
-            td(strong("Core Runtime")),
-            td("VanJS (vanjs-core 1.6)"),
-            td("約 0.9 KB"),
-            td(span({ class: "c-badge c-badge-info" }, "1.26 KB")),
-            td("直接DOM生成。仮想DOMなし、DOM Level 1/2互換"),
-          ),
-          tr(
-            td(strong("Position Engine")),
-            td("自作 placeSafePopover"),
-            td("約 0.2 KB"),
-            td(span({ class: "c-badge c-badge-success" }, "0.35 KB")),
-            td("四則演算+ClampでFloating UI(3.5~5KB)を完全代替"),
-          ),
-          tr(
-            td(strong("Event & Back Key")),
-            td("onSafeTap / onSafeBackKey"),
-            td("—"),
-            td(span({ class: "c-badge c-badge-success" }, "0.41 KB")),
-            td("Touch/Click調停、Smart TVリモコンBackキー対応"),
-          ),
-          tr(
-            td(strong("UI Components")),
-            td("Portal, Modal, Popover, Tabs, Toast"),
-            td("約 0.3 KB (Portalのみ)"),
-            td(span({ class: "c-badge c-badge-warning" }, "1.87 KB (複合)")),
-            td("Top-layer (<dialog>) 非依存。個別unmountでリーク完全防止"),
-          ),
-          tr(
-            td(strong("Router")),
-            td("Hash Router (van.state)"),
-            td("約 15 行"),
-            td(span({ class: "c-badge c-badge-success" }, "0.17 KB")),
-            td("hashchangeイベント駆動、外部ライブラリ不要"),
-          ),
-          tr(
-            td(strong("合計ランタイム")),
-            td("Model-C 改 (Full Runtime)"),
-            td("約 1.3〜1.6 KB"),
-            td(strong(span({ class: "c-badge c-badge-info" }, "3.23 KB"))),
-            td("実務運用可能なフルセットSPAランタイムとして極小"),
+          ARCHITECTURE_ROWS.map((row) =>
+            tr(
+              td(strong(row.layer)),
+              td(row.method),
+              td(row.target),
+              td(
+                row.isTotal
+                  ? strong(span({ class: row.badgeClass }, row.measured))
+                  : span({ class: row.badgeClass }, row.measured),
+              ),
+              td(row.notes),
+            ),
           ),
         ),
       ),

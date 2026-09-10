@@ -5,6 +5,12 @@ import { HStack } from "../components/stack.js";
 
 const { button, div, h2, p, span, strong, table, tbody, td, th, thead, tr } = van.tags;
 
+const TAB_SWITCH_OPTIONS = [
+  { id: "overview", label: "概要タブへ切替", query: "" },
+  { id: "activity", label: "アクティビティタブへ切替", query: "&sort=desc" },
+  { id: "settings", label: "設定タブへ切替", query: "" },
+];
+
 export function StatePage({ params = {}, query = {} } = {}) {
   const localCounter = van.state(0);
   const activeUserId = params.id || "100";
@@ -155,26 +161,14 @@ export function StatePage({ params = {}, query = {} } = {}) {
       // Interactive Tab Buttons (Updates query string without reload)
       HStack(
         { spacing: 8 },
-        button(
-          {
-            class: `c-btn ${activeTab === "overview" ? "c-btn-primary" : ""}`,
-            onclick: () => navigate(`/state/users/${activeUserId}?tab=overview`),
-          },
-          "概要タブへ切替",
-        ),
-        button(
-          {
-            class: `c-btn ${activeTab === "activity" ? "c-btn-primary" : ""}`,
-            onclick: () => navigate(`/state/users/${activeUserId}?tab=activity&sort=desc`),
-          },
-          "アクティビティタブへ切替",
-        ),
-        button(
-          {
-            class: `c-btn ${activeTab === "settings" ? "c-btn-primary" : ""}`,
-            onclick: () => navigate(`/state/users/${activeUserId}?tab=settings`),
-          },
-          "設定タブへ切替",
+        TAB_SWITCH_OPTIONS.map((tab) =>
+          button(
+            {
+              class: `c-btn ${activeTab === tab.id ? "c-btn-primary" : ""}`,
+              onclick: () => navigate(`/state/users/${activeUserId}?tab=${tab.id}${tab.query}`),
+            },
+            tab.label,
+          ),
         ),
       ),
     ),

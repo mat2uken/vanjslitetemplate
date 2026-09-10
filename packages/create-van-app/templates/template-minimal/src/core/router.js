@@ -56,35 +56,47 @@ function parseLocation() {
   };
 }
 
+// Singleton frozen empty object to eliminate object allocation for static routes & empty queries
+const EMPTY_OBJECT = Object.freeze({});
+
 /**
  * Parse query string (?key=val&sort=asc) into key-value object.
- * Zero-copy string slicing with indexOf('=') avoids intermediate array allocations.
+ * Zero-allocation string pointer traversal with indexOf('&') and indexOf('=')
+ * completely eliminates intermediate array allocations (no split('&')).
  * Embedded-safe: Does not require modern URLSearchParams.
  */
 export function parseQuery(search = "") {
   if (!search) {
-    return {};
+    return EMPTY_OBJECT;
   }
   const queryStr = search.startsWith("?") ? search.slice(1) : search;
   if (!queryStr) {
-    return {};
+    return EMPTY_OBJECT;
   }
 
   const result = {};
-  for (const pair of queryStr.split("&")) {
-    if (!pair) {
-      continue;
+  let start = 0;
+  const len = queryStr.length;
+
+  while (start < len) {
+    let nextAmp = queryStr.indexOf("&", start);
+    if (nextAmp === -1) {
+      nextAmp = len;
     }
-    const eqIdx = pair.indexOf("=");
-    const rawKey = eqIdx === -1 ? pair : pair.slice(0, eqIdx);
-    const rawVal = eqIdx === -1 ? "" : pair.slice(eqIdx + 1);
-    try {
-      result[decodeURIComponent(rawKey.replaceAll("+", " "))] = decodeURIComponent(
-        rawVal.replaceAll("+", " "),
-      );
-    } catch {
-      result[rawKey] = rawVal;
+    if (nextAmp > start) {
+      const eqIdx = queryStr.indexOf("=", start);
+      const hasEq = eqIdx !== -1 && eqIdx < nextAmp;
+      const rawKey = hasEq ? queryStr.slice(start, eqIdx) : queryStr.slice(start, nextAmp);
+      const rawVal = hasEq ? queryStr.slice(eqIdx + 1, nextAmp) : "";
+      try {
+        result[decodeURIComponent(rawKey.replaceAll("+", " "))] = decodeURIComponent(
+          rawVal.replaceAll("+", " "),
+        );
+      } catch {
+        result[rawKey] = rawVal;
+      }
     }
+    start = nextAmp + 1;
   }
   return result;
 }
@@ -153,6 +165,9 @@ export function matchRoute(routeTable, currentPathname) {
     const match = regex.exec(currentPathname);
 
     if (match) {
+      if (keys.length === 0) {
+        return { component, params: EMPTY_OBJECT, pattern };
+      }
       const params = {};
       for (let k = 0; k < keys.length; k++) {
         const key = keys[k];

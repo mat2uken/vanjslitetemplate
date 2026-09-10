@@ -27,16 +27,15 @@ export function attachPopover(triggerEl, contentOrFactory, options = {}) {
       return;
     }
     isOpen = false;
-    if (removeOutsideTap) {
-      removeOutsideTap();
-    }
-    if (removeBackKey) {
-      removeBackKey();
-    }
+    removeOutsideTap?.();
+    removeOutsideTap = null;
+    removeBackKey?.();
+    removeBackKey = null;
     window.removeEventListener("resize", reposition);
     window.removeEventListener("scroll", reposition, true);
     if (unmountPortalFn) {
       unmountPortalFn();
+      unmountPortalFn = null;
     }
     popoverEl = null;
   }

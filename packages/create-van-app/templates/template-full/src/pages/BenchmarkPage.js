@@ -44,8 +44,8 @@ export function BenchmarkPage() {
       return;
     }
     const t0 = performance.now();
-    // Clone array so VanJS detects reference change and triggers reactive DOM update
-    const sorted = sortBy([...itemsState.val], (item) => -item.val);
+    // Clone array with fast native slice() so VanJS detects reference change
+    const sorted = sortBy(itemsState.val.slice(), (item) => -item.val);
     itemsState.val = sorted;
 
     requestAnimationFrame(() => {

@@ -47,6 +47,35 @@ const tabs = [
   },
 ];
 
+const ACCORDION_ITEMS = [
+  {
+    content:
+      "親コンテナに overflow: hidden や transform がかかっている場合、一般的な fixed 要素はスクロールで切り取られたり位置がずれたりします。document.body 直下にPortalマウントすることでこの制約を100%回避できます。",
+    title: "アコーディオン項目 1: なぜ組込みでPortalが必要か？",
+  },
+  {
+    content:
+      "モーダルやポップオーバーを閉じた瞬間、unmount() コールバックが DOM ツリーから要素を完全に除去し、イベントリスナーも解除するため、長時間稼働するSTB環境でもメモリリークを起こしません。",
+    title: "アコーディオン項目 2: メモリリーク防止機構",
+  },
+];
+
+const TOAST_ACTIONS = [
+  { class: "c-btn", label: "情報トースト", msg: "通常通知メッセージです", type: "info" },
+  {
+    class: "c-btn c-btn-primary",
+    label: "成功トースト",
+    msg: "処理が正常に完了しました！",
+    type: "success",
+  },
+  {
+    class: "c-btn c-btn-danger",
+    label: "エラートースト",
+    msg: "通信エラーが発生しました",
+    type: "error",
+  },
+];
+
 export function ComponentsPage() {
   const modalCount = van.state(0);
 
@@ -176,14 +205,7 @@ export function ComponentsPage() {
         { class: "c-card-description" },
         "<details>/<summary> のレンダリング差異を避けるための純粋なState駆動アコーディオン。",
       ),
-      createAccordionItem(
-        "アコーディオン項目 1: なぜ組込みでPortalが必要か？",
-        "親コンテナに overflow: hidden や transform がかかっている場合、一般的な fixed 要素はスクロールで切り取られたり位置がずれたりします。document.body 直下にPortalマウントすることでこの制約を100%回避できます。",
-      ),
-      createAccordionItem(
-        "アコーディオン項目 2: メモリリーク防止機構",
-        "モーダルやポップオーバーを閉じた瞬間、unmount() コールバックが DOM ツリーから要素を完全に除去し、イベントリスナーも解除するため、長時間稼働するSTB環境でもメモリリークを起こしません。",
-      ),
+      ACCORDION_ITEMS.map((item) => createAccordionItem(item.title, item.content)),
     ),
 
     // 5. Toast Test
@@ -192,26 +214,14 @@ export function ComponentsPage() {
       div({ class: "c-card-header" }, "5. Lightweight Toast 通知"),
       div(
         { class: "u-flex u-space-x" },
-        button(
-          {
-            class: "c-btn",
-            onclick: () => showToast("通常通知メッセージです", "info"),
-          },
-          "情報トースト",
-        ),
-        button(
-          {
-            class: "c-btn c-btn-primary",
-            onclick: () => showToast("処理が正常に完了しました！", "success"),
-          },
-          "成功トースト",
-        ),
-        button(
-          {
-            class: "c-btn c-btn-danger",
-            onclick: () => showToast("通信エラーが発生しました", "error"),
-          },
-          "エラートースト",
+        TOAST_ACTIONS.map((action) =>
+          button(
+            {
+              class: action.class,
+              onclick: () => showToast(action.msg, action.type),
+            },
+            action.label,
+          ),
         ),
       ),
     ),
