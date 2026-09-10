@@ -201,6 +201,14 @@ if (typeof window !== "undefined") {
   window.addEventListener("hashchange", updateRoute);
 }
 
+function formatPath(to) {
+  if (!to) {
+    return "/";
+  }
+  const clean = to.startsWith("#") ? to.slice(1) : to;
+  return clean.startsWith("/") ? clean : `/${clean}`;
+}
+
 /**
  * Programmatic navigation
  */
@@ -209,9 +217,7 @@ export function navigate(to) {
     return;
   }
 
-  const isTargetHash = to.startsWith("#");
-  const cleanTarget = isTargetHash ? to.slice(1) : to;
-  const formattedPath = cleanTarget.startsWith("/") ? cleanTarget : `/${cleanTarget}`;
+  const formattedPath = formatPath(to);
 
   if (routerMode === "hash") {
     const hashTarget = `#${formattedPath}`;
@@ -238,8 +244,7 @@ export function Link(props = {}, ...children) {
     if (!to) {
       return "#";
     }
-    const cleanTo = to.startsWith("#") ? to.slice(1) : to;
-    const formatted = cleanTo.startsWith("/") ? cleanTo : `/${cleanTo}`;
+    const formatted = formatPath(to);
     return routerMode === "hash" ? `#${formatted}` : formatted;
   };
 

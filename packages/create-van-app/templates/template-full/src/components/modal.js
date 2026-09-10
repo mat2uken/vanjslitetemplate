@@ -32,16 +32,12 @@ export function openModal({
 
   function close() {
     cleanup();
-    if (onCancel) {
-      onCancel();
-    }
+    onCancel?.();
   }
 
   function handleOk() {
     cleanup();
-    if (onOk) {
-      onOk();
-    }
+    onOk?.();
   }
 
   const okBtn = button(

@@ -1,7 +1,7 @@
 import van from "../core/van.js";
 import { mountPortal } from "./portal.js";
 
-const { div, span } = van.tags;
+const { div } = van.tags;
 
 let toastContainer = null;
 let unmountContainer = null;
@@ -17,13 +17,17 @@ function getOrCreateContainer() {
 /**
  * Shows an ultra-lightweight toast notification.
  * Auto-cleans and unmounts container from body when empty (zero memory leak).
+ * Zero extra DOM nodes: message text is rendered directly without wrapping <span>.
  */
 export function showToast(message, type = "info", duration = 3000) {
   const container = getOrCreateContainer();
 
   const toastEl = div(
-    { class: `c-toast ${type === "success" ? "is-success" : type === "error" ? "is-error" : ""}` },
-    span(message),
+    {
+      class:
+        `c-toast ${type === "success" ? "is-success" : type === "error" ? "is-error" : ""}`.trim(),
+    },
+    message,
   );
 
   container.append(toastEl);

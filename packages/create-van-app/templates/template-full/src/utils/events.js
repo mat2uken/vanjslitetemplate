@@ -63,10 +63,13 @@ export function onOutsideTap(elements, onOutside) {
 
   const onDocumentEvent = (e) => {
     const target = e.target;
-    const isInside = elementsArray.some((el) => el && (el === target || el.contains(target)));
-    if (!isInside) {
-      onOutside(e);
+    for (let i = 0; i < elementsArray.length; i++) {
+      const el = elementsArray[i];
+      if (el && (el === target || el.contains(target))) {
+        return;
+      }
     }
+    onOutside(e);
   };
 
   const timer = setTimeout(() => {

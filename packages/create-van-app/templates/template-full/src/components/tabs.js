@@ -10,7 +10,10 @@ const { button, div, span } = van.tags;
  */
 export function createTabs(tabs, defaultTabId = tabs[0]?.id) {
   const activeTabId = van.state(defaultTabId);
-  const tabContentMap = new Map(tabs.map((t) => [t.id, t.content]));
+  const tabContentMap = new Map();
+  for (let i = 0; i < tabs.length; i++) {
+    tabContentMap.set(tabs[i].id, tabs[i].content);
+  }
 
   return div(
     { class: "c-tabs" },

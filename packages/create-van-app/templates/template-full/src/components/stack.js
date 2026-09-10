@@ -52,13 +52,9 @@ function isChild(val) {
  * Flexible Stack container (inspired by @nkzw/stack)
  */
 export function Stack(props = {}, ...children) {
-  let options = props;
-  let childNodes = children;
-
-  if (isChild(props)) {
-    childNodes = [props, ...children];
-    options = {};
-  }
+  const isFirstChild = isChild(props);
+  const options = isFirstChild ? {} : props;
+  const childNodes = isFirstChild ? [props, ...children] : children;
 
   const {
     align,
@@ -89,8 +85,7 @@ export function Stack(props = {}, ...children) {
     styles += ` ${customStyle};`;
   }
 
-  const classes =
-    `c-stack ${isRow ? "u-flex-row" : "u-flex-col"} ${spacingClass} ${customClass}`.trim();
+  const classes = `c-stack ${isRow ? "u-flex-row" : "u-flex-col"}${spacingClass ? ` ${spacingClass}` : ""}${customClass ? ` ${customClass}` : ""}`;
 
   // Zero-copy: childNodes are passed directly into VanJS div() without intermediate .flat(Infinity) copy
   return div(
