@@ -150,29 +150,39 @@ vanjslightpoc/
 ├── README.md                        # 本ドキュメント
 ├── scripts/
 │   ├── analyze-size.js              # モジュール別・全体サイズの自動計測スクリプト
-│   └── build-standalone.js          # 組込みエンジン直接インジェクション用単一HTML生成
+│   ├── build-standalone.js          # 組込みエンジン直接インジェクション用単一HTML生成
+│   ├── open-safari.js               # macOS Safari / サーバー自動起動
+│   └── sync-templates.js            # CLIテンプレート同期スクリプト
 ├── tests/
 │   ├── position.test.js             # Safe Position Engine 単体テスト (Flip & Clamp)
-│   ├── router.test.js               # Hash Router 単体テスト (同期・非同期ルーティング)
+│   ├── router.test.js               # Enhanced Router 単体テスト (動的パス/ゼロアロケーションクエリ)
+│   ├── store.test.js                # Global Store 単体テスト (van.state永続化 & リアクティブ派生)
 │   ├── stack.test.js                # @nkzw/stack 互換コンポーネント単体テスト
 │   ├── core.test.js                 # @nkzw/core ユーティリティ連携テスト
 │   ├── modal.test.js                # Portal Modal 単体テスト (A11y/ESC/Backdrop)
 │   ├── popover.test.js              # Safe Popover 単体テスト (Light Dismiss/ESC)
-│   ├── tabs.test.js                 # Tabs & Accordion 単体テスト (van.state駆動)
-│   ├── toast.test.js                # Toast 通知単体テスト (自動破棄)
-│   └── events.test.js               # 組込みイベント単体テスト (STBリモコンBack/GhostClick)
+│   ├── tabs.test.js                 # Tabs & Accordion 単体テスト (van.state駆動/O(1) Map)
+│   ├── toast.test.js                # Toast 通知単体テスト (自動破棄/プログラマティック消去)
+│   ├── events.test.js               # 組込みイベント単体テスト (STBリモコンBack/GhostClick)
+│   └── cli.test.js                  # create-van-app CLI スキャフォールディング単体テスト
 ├── e2e/
 │   ├── home.spec.js                 # ホーム画面・メトリクス・ナビゲーション E2E
 │   ├── components.spec.js           # Modal・Popover・Tabs・Accordion・Toast 実機 E2E
 │   ├── layout.spec.js               # Subset CSS & Stack レイアウト実機 E2E
-│   ├── benchmark.spec.js            # Direct DOM 100件生成 & sortBy ソート実機 E2E
+│   ├── state.spec.js                # グローバル状態・動的ルーティング・パラメータ解析 E2E
+│   ├── benchmark.spec.js            # Direct DOM 100件生成 & sortBy ソート実機 E2E (Web-first)
 │   └── standalone.spec.js           # 単一自己完結HTML (file://) Safari 実機 E2E
+├── packages/
+│   └── create-van-app/              # 公式スキャフォールディング CLI パッケージ
+│       ├── bin/index.js             # ゼロ依存 CLI コマンド実行ファイル
+│       └── templates/               # full / minimal 配布テンプレート
 └── src/
     ├── main.js                      # アプリケーション初期化・ルーティングマウント
     ├── bundle-core.js               # コアフレームワーク層（サイズ測定用エントリ）
     ├── core/
     │   ├── van.js                   # vanjs-core re-export
-    │   └── router.js                # 超軽量ハッシュルーター (約15行、van.state駆動)
+    │   ├── router.js                # 動的パス・クエリ・Hash/History両対応ルーター
+    │   └── store.js                 # グローバル状態管理 & ストアファクトリ
     ├── styles/
     │   └── subset.css               # Strict Subset CSS (No gap, No grid, No CSS var)
     ├── utils/
@@ -180,15 +190,16 @@ vanjslightpoc/
     │   └── events.js                # 組込み安全イベント (Touch/Click/ESC/STB Backキー)
     ├── components/
     │   ├── portal.js                # メモリ安全Portalエンジン
-    │   ├── modal.js                 # Portal Modal (<dialog>非依存)
+    │   ├── modal.js                 # Portal Modal (<dialog>非依存、直接ノードフォーカス)
     │   ├── popover.js               # Safe Popover (Safe Position連動)
     │   ├── tabs.js                  # Lightweight Tabs & Accordion (van.state駆動)
-    │   ├── toast.js                 # Lightweight Toast (自動消去)
+    │   ├── toast.js                 # Lightweight Toast (自動消去 & 手動Dismiss)
     │   └── stack.js                 # @nkzw/stack 思想の組込みセーフ Stack (No gap)
     └── pages/
         ├── HomePage.js              # 概要・アーキテクチャ特性・実測値表
         ├── ComponentsPage.js        # 各種UIコンポーネント実機動作検証
         ├── LayoutPage.js            # CSSレイアウト制約 & Stack コンポーネント検証
+        ├── StatePage.js             # 状態管理・動的ルーティング・パラメータ解析
         └── BenchmarkPage.js         # 1,000 DOMノードレンダリング計測 (@nkzw/core連動)
 ```
 
@@ -199,17 +210,17 @@ vanjslightpoc/
 ### 4.1 テストスイートの実行
 ```bash
 # 1. ユニットテスト実行 (Vitest: happy-dom)
-# -> 9 テストファイル / 25 テスト全合格 (~500ms)
+# -> 11 テストファイル / 38 テスト全合格 (~1.1s)
 npm run test:unit
 
 # 2. E2E テスト実行 (Playwright: WebKit デスクトップ Safari & Mobile Safari)
-# -> 32 テスト全合格 (~8s)
+# -> 44 テスト全合格 (~6.5s)
 npm run test:e2e
 
 # 3. ユニットテスト + E2E テストの一括実行
 npm run test:all
 
-# 4. 超高速 Lint (Oxlint + @nkzw/oxlint-config)
+# 4. 超高速 Lint (Oxlint + @nkzw/oxlint-config: 182 rules)
 npm run lint
 
 # 5. 超高速 フォーマット (Oxfmt)
@@ -230,9 +241,24 @@ npm run safari:standalone  # dist/standalone.html を file:// で Safari 起動
 
 ### 4.3 ビルド & バンドルサイズ測定
 ```bash
-# プロダクションビルド & 単一HTML生成 (Rolldown / Oxc)
+# プロダクションビルド & 単一HTML生成 (Rolldown / Oxc / esbuild)
 npm run build
 
 # サイズ・バジェット自動計測 (zlib gzip/brotli)
 npm run size
 ```
+
+---
+
+## 5. 究極のリファクタリング & 極限最適化の実績
+
+1. **Zero-Allocation クエリパーサー (`src/core/router.js`)**:
+   - `split('&')` による中間配列生成を完全廃止し、インデックスポインタ走査（`indexOf`）による真のゼロ配列アロケーションを実現。
+2. **Direct Property アクセス (`src/core/store.js`)**:
+   - ゲッター関数のオーバーヘッドを排除し、モジュールシングルトンの直接プロパティ参照によりコールスタックをゼロ化。
+3. **Direct Node Focus モーダル (`src/components/modal.js`)**:
+   - `querySelector` による DOM ツリー探索を全廃し、VanJS で生成したノード参照を直接保持してフォーカス。タイマーリークもゼロ。
+4. **Programmatic Dismiss トースト (`src/components/toast.js`)**:
+   - 自動消去タイマーをカプセル化した `dismiss` 関数を返却し、画面遷移時のタイマーリークを防止。不要な `<span>` ラッパーもゼロ。
+5. **Web-First Playwright E2E (`e2e/benchmark.spec.js`)**:
+   - 静的スリープ（`waitForTimeout`）をゼロ化し、`expect(...).toPass()` による web-first assertion へ刷新。テスト時間を約1秒短縮。

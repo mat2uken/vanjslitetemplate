@@ -255,17 +255,12 @@ export function navigate(to) {
 export function Link(props = {}, ...children) {
   const { to, onclick, class: className, ...rest } = props;
 
-  const computeHref = () => {
-    if (!to) {
-      return "#";
-    }
-    const formatted = formatPath(to);
-    return routerMode === "hash" ? `#${formatted}` : formatted;
-  };
+  const formatted = to ? formatPath(to) : "";
+  const href = to ? (routerMode === "hash" ? `#${formatted}` : formatted) : "#";
 
   return a(
     {
-      href: computeHref,
+      href,
       class: className,
       onclick: (e) => {
         // Let middle-clicks / new-tab keyboard shortcuts pass through natively
@@ -273,9 +268,7 @@ export function Link(props = {}, ...children) {
           return;
         }
         e.preventDefault();
-        if (onclick) {
-          onclick(e);
-        }
+        onclick?.(e);
         navigate(to);
       },
       ...rest,

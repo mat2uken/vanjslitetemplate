@@ -24,9 +24,7 @@ export function createTabs(tabs, defaultTabId = tabs[0]?.id) {
         button(
           {
             class: () => `c-tabs-btn ${activeTabId.val === tab.id ? "is-active" : ""}`,
-            onclick: () => {
-              activeTabId.val = tab.id;
-            },
+            onclick: () => (activeTabId.val = tab.id),
           },
           tab.label,
         ),

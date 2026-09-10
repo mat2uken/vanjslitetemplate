@@ -193,7 +193,7 @@ export function StatePage({ params = {}, query = {} } = {}) {
           ),
           tr(
             td(strong("クエリ解析")),
-            td("URLSearchParams + 独自フォールバック解析"),
+            td("ゼロアロケーション走査 (中間配列ゼロ)"),
             td(span({ class: "c-badge c-badge-success" }, "全環境 100% 互換")),
           ),
           tr(

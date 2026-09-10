@@ -31,20 +31,16 @@ test.describe("Performance & Benchmark (Safari & Mobile Safari)", () => {
 
     // Click sort button
     await page.click('button:has-text("ソート (sortBy降順)")');
-    await page.waitForTimeout(200);
 
-    // Read first two rows' values
-    const firstRowValText = await page
-      .locator(".c-table tbody tr:nth-child(1) td:nth-child(3)")
-      .innerText();
-    const secondRowValText = await page
-      .locator(".c-table tbody tr:nth-child(2) td:nth-child(3)")
-      .innerText();
+    // Read first two rows' values with web-first assertion
+    const firstCell = page.locator(".c-table tbody tr:nth-child(1) td:nth-child(3)");
+    const secondCell = page.locator(".c-table tbody tr:nth-child(2) td:nth-child(3)");
 
-    const firstVal = Number.parseInt(firstRowValText, 10);
-    const secondVal = Number.parseInt(secondRowValText, 10);
-
-    expect(firstVal).toBeGreaterThanOrEqual(secondVal);
+    await expect(async () => {
+      const firstVal = Number.parseInt(await firstCell.innerText(), 10);
+      const secondVal = Number.parseInt(await secondCell.innerText(), 10);
+      expect(firstVal).toBeGreaterThanOrEqual(secondVal);
+    }).toPass();
   });
 
   test("clears benchmark items", async ({ page }) => {

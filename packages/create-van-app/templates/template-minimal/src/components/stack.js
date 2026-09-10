@@ -99,12 +99,10 @@ export function Stack(props = {}, ...children) {
 }
 
 function createStack(defaultDirection) {
-  return (props, ...children) => {
-    if (isChild(props)) {
-      return Stack({ direction: defaultDirection }, props, ...children);
-    }
-    return Stack({ ...props, direction: defaultDirection }, ...children);
-  };
+  return (props, ...children) =>
+    isChild(props)
+      ? Stack({ direction: defaultDirection }, props, ...children)
+      : Stack({ ...props, direction: defaultDirection }, ...children);
 }
 
 /**

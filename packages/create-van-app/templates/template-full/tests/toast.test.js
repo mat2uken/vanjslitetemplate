@@ -24,4 +24,17 @@ describe("Lightweight Toast Component", () => {
 
     expect(container.querySelector(".c-toast")).toBeNull();
   });
+
+  it("supports programmatic dismiss immediately", () => {
+    const dismiss = showToast("Dismissable Toast", "info", 5000);
+
+    const container = document.querySelector(".c-toast-container");
+    expect(container).not.toBeNull();
+    expect(container.textContent).toContain("Dismissable Toast");
+
+    dismiss();
+
+    expect(document.querySelector(".c-toast")).toBeNull();
+    expect(document.querySelector(".c-toast-container")).toBeNull();
+  });
 });

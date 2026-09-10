@@ -148,7 +148,7 @@ export function BenchmarkPage() {
     div(
       { class: "c-card u-space-y" },
       div({ class: "c-card-header" }, span("レンダリング結果テーブル"), () =>
-        isBenchmarking.val ? span({ class: "c-badge c-badge-warning" }, "計測中...") : null,
+        isBenchmarking.val ? span({ class: "c-badge c-badge-warning" }, "計測中...") : span(""),
       ),
       div(
         {

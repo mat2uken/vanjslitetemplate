@@ -32,11 +32,15 @@ export function showToast(message, type = "info", duration = 3000) {
 
   container.append(toastEl);
 
-  setTimeout(() => {
+  let timer = null;
+  const dismiss = () => {
+    if (timer !== null) {
+      clearTimeout(timer);
+      timer = null;
+    }
     if (toastEl.parentNode) {
       toastEl.parentNode.removeChild(toastEl);
     }
-    // If container is empty, unmount it to prevent lingering DOM nodes
     if (toastContainer && toastContainer.childNodes.length === 0) {
       if (unmountContainer) {
         unmountContainer();
@@ -44,5 +48,11 @@ export function showToast(message, type = "info", duration = 3000) {
       }
       toastContainer = null;
     }
-  }, duration);
+  };
+
+  if (duration > 0) {
+    timer = setTimeout(dismiss, duration);
+  }
+
+  return dismiss;
 }
