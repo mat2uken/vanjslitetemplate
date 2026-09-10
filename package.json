@@ -17,8 +17,8 @@
     "format:check": "oxfmt --check src/ scripts/ tests/ e2e/",
     "size": "node scripts/analyze-size.js",
     "standalone": "node scripts/build-standalone.js",
-    "safari": "open -a Safari http://localhost:3000",
-    "safari:standalone": "open -a Safari dist/standalone.html"
+    "safari": "node scripts/open-safari.js",
+    "safari:standalone": "npm run standalone && open -a Safari dist/standalone.html"
   },
   "keywords": [
     "vanjs",

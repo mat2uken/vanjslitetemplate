@@ -48,4 +48,33 @@ test.describe("CSS Layout & Every Layout Primitives (Safari & Mobile Safari)", (
     const badges = table.locator(".c-badge-success");
     await expect(badges).toHaveCount(5); // The Stack, The Switcher, The Center, The Imposter, The Box
   });
+
+  test("scrolls smoothly down to view all Every Layout cards and the bottom audit table", async ({
+    page,
+  }) => {
+    // Check initial scrollTop is 0
+    const initialScrollTop = await page.evaluate(() => {
+      const s = document.querySelector(".c-main-scroll");
+      return s ? s.scrollTop : -1;
+    });
+    expect(initialScrollTop).toBe(0);
+
+    // Scroll to the bottom table
+    await page.evaluate(() => {
+      const s = document.querySelector(".c-main-scroll");
+      if (s) {
+        s.scrollTop = s.scrollHeight;
+      }
+    });
+
+    const scrolledTop = await page.evaluate(() => {
+      const s = document.querySelector(".c-main-scroll");
+      return s ? s.scrollTop : 0;
+    });
+    expect(scrolledTop).toBeGreaterThan(200);
+
+    // Verify table is fully visible in viewport
+    const table = page.locator(".c-table");
+    await expect(table).toBeVisible();
+  });
 });

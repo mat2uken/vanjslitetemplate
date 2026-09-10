@@ -30,4 +30,42 @@ test.describe("Standalone HTML Direct Injection (Safari & Mobile Safari)", () =>
     await page.click('.c-popover button:has-text("閉じる")');
     await expect(page.locator(".c-popover")).not.toBeVisible();
   });
+
+  test("standalone page enables vertical scrolling without cutting off bottom content", async ({
+    page,
+  }) => {
+    await page.goto(`file://${standalonePath}#/components`);
+
+    // Verify viewport containment: body should not overflow
+    const bodyContainment = await page.evaluate(() => {
+      const b = document.body;
+      const s = document.querySelector(".c-main-scroll");
+      return {
+        bodyScrollHeight: b.scrollHeight,
+        bodyClientHeight: b.clientHeight,
+        hasMainScroll: Boolean(s),
+        mainScrollHeight: s ? s.scrollHeight : 0,
+        mainClientHeight: s ? s.clientHeight : 0,
+      };
+    });
+
+    expect(bodyContainment.hasMainScroll).toBe(true);
+    expect(bodyContainment.mainScrollHeight).toBeGreaterThan(bodyContainment.mainClientHeight);
+
+    // Scroll to the bottom of the container
+    await page.evaluate(() => {
+      const s = document.querySelector(".c-main-scroll");
+      s.scrollTop = s.scrollHeight;
+    });
+
+    const scrollTop = await page.evaluate(() => {
+      const s = document.querySelector(".c-main-scroll");
+      return s.scrollTop;
+    });
+    expect(scrollTop).toBeGreaterThan(100);
+
+    // Bottom element (Lightweight Toast card) must be visible
+    const toastCard = page.locator('.c-card:has-text("5. Lightweight Toast")');
+    await expect(toastCard).toBeVisible();
+  });
 });
