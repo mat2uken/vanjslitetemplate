@@ -73,10 +73,16 @@ export function attachPopover(triggerEl, contentOrFactory, options = {}) {
     window.addEventListener("scroll", reposition, true);
   }
 
-  triggerEl.addEventListener("click", (e) => {
+  const onTriggerClick = (e) => {
     e.stopPropagation();
     open();
-  });
+  };
+  triggerEl.addEventListener("click", onTriggerClick);
 
-  return { close, open, reposition };
+  function destroy() {
+    close();
+    triggerEl.removeEventListener("click", onTriggerClick);
+  }
+
+  return { close, destroy, open, reposition };
 }

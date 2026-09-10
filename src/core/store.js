@@ -44,8 +44,8 @@ export const authStore = {
  */
 export function createStore(initialState = {}, actionsFactory = () => ({})) {
   const state = {};
-  for (const [key, value] of Object.entries(initialState)) {
-    state[key] = van.state(value);
+  for (const key of Object.keys(initialState)) {
+    state[key] = van.state(initialState[key]);
   }
 
   const actions = actionsFactory(state);

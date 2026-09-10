@@ -103,22 +103,21 @@ export function Stack(props = {}, ...children) {
   );
 }
 
+function createStack(defaultDirection) {
+  return (props, ...children) => {
+    if (isChild(props)) {
+      return Stack({ direction: defaultDirection }, props, ...children);
+    }
+    return Stack({ ...props, direction: defaultDirection }, ...children);
+  };
+}
+
 /**
  * Horizontal Stack (HStack)
  */
-export function HStack(props, ...children) {
-  if (isChild(props)) {
-    return Stack({ direction: "horizontal" }, props, ...children);
-  }
-  return Stack({ ...props, direction: "horizontal" }, ...children);
-}
+export const HStack = createStack("horizontal");
 
 /**
  * Vertical Stack (VStack)
  */
-export function VStack(props, ...children) {
-  if (isChild(props)) {
-    return Stack({ direction: "vertical" }, props, ...children);
-  }
-  return Stack({ ...props, direction: "vertical" }, ...children);
-}
+export const VStack = createStack("vertical");

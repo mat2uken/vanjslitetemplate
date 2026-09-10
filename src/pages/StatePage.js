@@ -3,7 +3,7 @@ import { authStore } from "../core/store.js";
 import { Link, navigate } from "../core/router.js";
 import { HStack } from "../components/stack.js";
 
-const { button, div, h2, p, span, strong, table, tbody, td, th, thead } = van.tags;
+const { button, div, h2, p, span, strong, table, tbody, td, th, thead, tr } = van.tags;
 
 export function StatePage({ params = {}, query = {} } = {}) {
   const localCounter = van.state(0);
@@ -185,24 +185,24 @@ export function StatePage({ params = {}, query = {} } = {}) {
       div({ class: "c-card-header" }, "3. 状態管理 & ルーティングの設計特徴"),
       table(
         { class: "c-table" },
-        thead(van.tags.tr(th("項目"), th("実装技術 / アプローチ"), th("組込み / Safari 適合性"))),
+        thead(tr(th("項目"), th("実装技術 / アプローチ"), th("組込み / Safari 適合性"))),
         tbody(
-          van.tags.tr(
+          tr(
             td(strong("グローバル状態")),
             td("ES Modules キャッシュ + van.state / van.derive"),
             td(span({ class: "c-badge c-badge-success" }, "メモリ超軽量 (数100B)")),
           ),
-          van.tags.tr(
+          tr(
             td(strong("パスパラメータ")),
             td("正規表現事前コンパイルキャッシュ (/users/:id)"),
             td(span({ class: "c-badge c-badge-success" }, "O(1) ルックアップ")),
           ),
-          van.tags.tr(
+          tr(
             td(strong("クエリ解析")),
             td("URLSearchParams + 独自フォールバック解析"),
             td(span({ class: "c-badge c-badge-success" }, "全環境 100% 互換")),
           ),
-          van.tags.tr(
+          tr(
             td(strong("動作モード")),
             td("Hash mode (組込み/file://) ⇄ History mode 切替対応"),
             td(span({ class: "c-badge c-badge-success" }, "SecurityError 回避")),

@@ -81,6 +81,14 @@ export function HomePage() {
         button(
           {
             class: "c-btn",
+            onclick: () => navigate("/state"),
+            style: "margin: 4px;",
+          },
+          "状態管理 & 動的ルーティング",
+        ),
+        button(
+          {
+            class: "c-btn",
             onclick: () => navigate("/benchmark"),
             style: "margin: 4px;",
           },

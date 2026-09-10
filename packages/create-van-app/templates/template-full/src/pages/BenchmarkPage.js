@@ -2,7 +2,7 @@ import van from "../core/van.js";
 import random from "@nkzw/core/random.js";
 import sortBy from "@nkzw/core/sortBy.js";
 
-const { button, div, h2, p, span, table, tbody, td, th, thead } = van.tags;
+const { button, div, h2, p, span, table, tbody, td, th, thead, tr } = van.tags;
 
 export function BenchmarkPage() {
   const isBenchmarking = van.state(false);
@@ -17,13 +17,15 @@ export function BenchmarkPage() {
     setTimeout(() => {
       const t0 = performance.now();
 
-      const newItems = [];
-      for (let i = 1; i <= count; i++) {
-        newItems.push({
-          id: i,
-          title: `Item #${i} - ${Math.random().toString(36).slice(2, 8)}`,
+      // Pre-allocate array capacity to prevent dynamic V8 heap resizes
+      const newItems = new Array(count);
+      for (let i = 0; i < count; i++) {
+        const id = i + 1;
+        newItems[i] = {
+          id,
+          title: `Item #${id} - ${Math.random().toString(36).slice(2, 8)}`,
           val: random(1, 1000),
-        });
+        };
       }
 
       itemsState.val = newItems;
@@ -161,12 +163,8 @@ export function BenchmarkPage() {
               )
             : table(
                 { class: "c-table" },
-                thead(van.tags.tr(th("ID"), th("ランダムハッシュ"), th("値"))),
-                tbody(
-                  itemsState.val.map((it) =>
-                    van.tags.tr(td(it.id), td(it.title), td(it.val)),
-                  ),
-                ),
+                thead(tr(th("ID"), th("ランダムハッシュ"), th("値"))),
+                tbody(itemsState.val.map((it) => tr(td(it.id), td(it.title), td(it.val)))),
               ),
       ),
     ),

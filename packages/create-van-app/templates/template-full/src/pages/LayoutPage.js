@@ -1,7 +1,9 @@
 import van from "../core/van.js";
 import { HStack, VStack } from "../components/stack.js";
 
-const { div, h2, p, span, strong, table, tbody, td, th, thead } = van.tags;
+const { div, h2, p, span, strong, table, tbody, td, th, thead, tr } = van.tags;
+
+const CARDS = [1, 2, 3, 4];
 
 export function LayoutPage() {
   return div(
@@ -100,7 +102,7 @@ export function LayoutPage() {
       ),
       div(
         { class: "l-switcher" },
-        [1, 2, 3, 4].map((e) =>
+        CARDS.map((e) =>
           div(
             { class: "c-metric-col" },
             div(
@@ -143,7 +145,7 @@ export function LayoutPage() {
       table(
         { class: "c-table" },
         thead(
-          van.tags.tr(
+          tr(
             th("Every Layout / CSS"),
             th("組込みでのリスク"),
             th("本PoCでの採用アプローチ"),
@@ -151,31 +153,31 @@ export function LayoutPage() {
           ),
         ),
         tbody(
-          van.tags.tr(
+          tr(
             td("The Stack (gap代替)"),
             td("Cobalt/旧Safariでgap無視"),
             td("* + * Lobotomized Owl マージン注入"),
             td(span({ class: "c-badge c-badge-success" }, "クリア")),
           ),
-          van.tags.tr(
+          tr(
             td("The Switcher (Grid代替)"),
             td("Webf/CobaltでGrid未対応"),
             td("flex-basis calc((35rem - 100%) * 999)"),
             td(span({ class: "c-badge c-badge-success" }, "クリア")),
           ),
-          van.tags.tr(
+          tr(
             td("The Center (コンテンツ幅)"),
             td("コンテナパディング溢れ"),
             td("box-sizing: content-box + margin-inline: auto"),
             td(span({ class: "c-badge c-badge-success" }, "クリア")),
           ),
-          van.tags.tr(
+          tr(
             td("The Imposter (Modal)"),
             td("fixed要素のスクロール脱落"),
             td("Portal + body直下マウント + inset: 0"),
             td(span({ class: "c-badge c-badge-success" }, "クリア")),
           ),
-          van.tags.tr(
+          tr(
             td("The Box (装飾・擬似要素)"),
             td("ネイティブブリッジで疑似要素脱落"),
             td("純粋な実DOMスパンとborder/padding"),

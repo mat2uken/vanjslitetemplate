@@ -20,30 +20,25 @@ export function placeSafePopover(triggerEl, popoverEl, options = {}) {
   const vh = window.innerHeight || docEl?.clientHeight || 640;
 
   // Vertical position with Flip
-  let top;
   const spaceBelow = vh - tRect.bottom - offset;
   const spaceAbove = tRect.top - offset;
+  const placeBelow =
+    placement === "bottom"
+      ? spaceBelow >= pRect.height || spaceBelow >= spaceAbove
+      : !(spaceAbove >= pRect.height || spaceAbove >= spaceBelow);
 
-  if (placement === "bottom") {
-    if (spaceBelow >= pRect.height || spaceBelow >= spaceAbove) {
-      top = tRect.bottom + offset;
-    } else {
-      top = tRect.top - offset - pRect.height;
-    }
-  } else {
-    if (spaceAbove >= pRect.height || spaceAbove >= spaceBelow) {
-      top = tRect.top - offset - pRect.height;
-    } else {
-      top = tRect.bottom + offset;
-    }
-  }
-
-  // Ensure within top/bottom screen boundary
-  top = clamp(top, margin, vh - pRect.height - margin);
+  const top = clamp(
+    placeBelow ? tRect.bottom + offset : tRect.top - offset - pRect.height,
+    margin,
+    vh - pRect.height - margin,
+  );
 
   // Horizontal position with Clamp
-  let left = tRect.left + (tRect.width - pRect.width) / 2;
-  left = clamp(left, margin, vw - pRect.width - margin);
+  const left = clamp(
+    tRect.left + (tRect.width - pRect.width) / 2,
+    margin,
+    vw - pRect.width - margin,
+  );
 
   popoverEl.style.position = "fixed";
   popoverEl.style.top = `${Math.round(top)}px`;

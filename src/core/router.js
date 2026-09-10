@@ -37,21 +37,13 @@ function parseLocation() {
   }
 
   // Hash mode: parses "#/users/42?tab=overview"
-  const rawHash = window.location.hash.startsWith("#")
-    ? window.location.hash.slice(1)
-    : window.location.hash;
-  const cleanHash = rawHash || "/";
-  const questionIdx = cleanHash.indexOf("?");
+  const hash = window.location.hash;
+  const cleanHash = hash.startsWith("#") ? hash.slice(1) : hash;
+  const target = cleanHash || "/";
+  const questionIdx = target.indexOf("?");
 
-  let pathname;
-  let search = "";
-
-  if (questionIdx !== -1) {
-    pathname = cleanHash.slice(0, questionIdx);
-    search = cleanHash.slice(questionIdx);
-  } else {
-    pathname = cleanHash;
-  }
+  let pathname = questionIdx === -1 ? target : target.slice(0, questionIdx);
+  const search = questionIdx === -1 ? "" : target.slice(questionIdx);
 
   if (!pathname.startsWith("/")) {
     pathname = `/${pathname}`;
@@ -97,6 +89,9 @@ export function parseQuery(search = "") {
   return result;
 }
 
+// Route normalization cache to eliminate repeated Object.entries allocations
+const routesCache = new WeakMap();
+
 // Pre-compilation pattern cache to eliminate regex compilation overhead during transitions
 const patternCache = new Map();
 
@@ -104,8 +99,9 @@ const patternCache = new Map();
  * Compile route pattern (/users/:id) into regex and key list
  */
 export function compilePattern(pattern) {
-  if (patternCache.has(pattern)) {
-    return patternCache.get(pattern);
+  const cached = patternCache.get(pattern);
+  if (cached) {
+    return cached;
   }
 
   if (pattern === "*") {
@@ -132,10 +128,16 @@ function normalizeRoutes(routes) {
   if (Array.isArray(routes)) {
     return routes;
   }
-  return Object.entries(routes).map(([pattern, component]) => ({
+  const cached = routesCache.get(routes);
+  if (cached) {
+    return cached;
+  }
+  const normalized = Object.entries(routes).map(([pattern, component]) => ({
     pattern,
     component,
   }));
+  routesCache.set(routes, normalized);
+  return normalized;
 }
 
 /**

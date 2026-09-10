@@ -1,5 +1,5 @@
-import { spawn } from "child_process";
-import http from "http";
+import { spawn } from "node:child_process";
+import http from "node:http";
 
 const PORT = 3000;
 const URL = `http://localhost:${PORT}`;

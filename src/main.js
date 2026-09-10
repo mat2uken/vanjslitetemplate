@@ -1,5 +1,5 @@
 import van from "./core/van.js";
-import { RouterView, currentRoute, navigate } from "./core/router.js";
+import { Link, RouterView, currentRoute } from "./core/router.js";
 import { HomePage } from "./pages/HomePage.js";
 import { ComponentsPage } from "./pages/ComponentsPage.js";
 import { LayoutPage } from "./pages/LayoutPage.js";
@@ -8,7 +8,7 @@ import { StatePage } from "./pages/StatePage.js";
 import { authStore } from "./core/store.js";
 import "./styles/subset.css";
 
-const { a, div, header, main, nav, span } = van.tags;
+const { div, header, main, nav, span } = van.tags;
 
 const routes = {
   "/": HomePage,
@@ -19,15 +19,15 @@ const routes = {
   "/state/users/:id": StatePage,
 };
 
-function App() {
-  const navItems = [
-    { label: "概要 (Home)", path: "/" },
-    { label: "UIコンポーネント", path: "/components" },
-    { label: "CSSレイアウト", path: "/layout" },
-    { label: "状態 & ルーティング", path: "/state" },
-    { label: "ベンチマーク", path: "/benchmark" },
-  ];
+const navItems = [
+  { label: "概要 (Home)", path: "/" },
+  { label: "UIコンポーネント", path: "/components" },
+  { label: "CSSレイアウト", path: "/layout" },
+  { label: "状態 & ルーティング", path: "/state" },
+  { label: "ベンチマーク", path: "/benchmark" },
+];
 
+function App() {
   return div(
     { id: "app-root" },
 
@@ -57,21 +57,15 @@ function App() {
     nav(
       { class: "c-nav-bar" },
       navItems.map((item) =>
-        a(
+        Link(
           {
             class: () => {
               const cur = currentRoute.val || "/";
               const isActive =
-                cur === item.path ||
-                (item.path === "/" && cur === "/") ||
-                (item.path !== "/" && cur.startsWith(item.path));
+                cur === item.path || (item.path !== "/" && cur.startsWith(item.path));
               return `c-nav-item ${isActive ? "is-active" : ""}`;
             },
-            href: `#${item.path}`,
-            onclick: (e) => {
-              e.preventDefault();
-              navigate(item.path);
-            },
+            to: item.path,
           },
           item.label,
         ),

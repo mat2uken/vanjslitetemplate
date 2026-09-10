@@ -6,6 +6,47 @@ import { showToast } from "../components/toast.js";
 
 const { button, div, h2, p, span, strong } = van.tags;
 
+const tabs = [
+  {
+    content: () =>
+      div(
+        p(
+          "VanJSのリアクティブステート（van.state）により、仮想DOMの差分計算を一切行わずにノードを直接切り替えています。",
+        ),
+        p(
+          { style: "font-size: 12px; color: #64748b;" },
+          "コード量: tabs.js は約35行。軽量エンジンでのメモリ消費は極小です。",
+        ),
+      ),
+    id: "tab1",
+    label: "概要",
+  },
+  {
+    content: () =>
+      div(
+        p(
+          "Cobalt/Webf/Lynx/Servo のいずれでも完全動作。ブラウザ標準のDOM Level 1/2 APIのみで実装されています。",
+        ),
+        p(
+          { style: "font-size: 12px; color: #64748b;" },
+          "Web Components (Shadow DOM) を使用しないため、ネイティブブリッジでのトラブルが起きません。",
+        ),
+      ),
+    id: "tab2",
+    label: "エンジン互換性",
+  },
+  {
+    content: () =>
+      div(
+        p(
+          "タブボタンにはキーボード/リモコン用のフォーカススタイルを設定。矢印キーやTabキーでの移動が可能です。",
+        ),
+      ),
+    id: "tab3",
+    label: "A11y/操作性",
+  },
+];
+
 export function ComponentsPage() {
   const modalCount = van.state(0);
 
@@ -73,48 +114,6 @@ export function ComponentsPage() {
     ),
     { placement: "bottom" },
   );
-
-  // Tabs Definition
-  const tabs = [
-    {
-      content: () =>
-        div(
-          p(
-            "VanJSのリアクティブステート（van.state）により、仮想DOMの差分計算を一切行わずにノードを直接切り替えています。",
-          ),
-          p(
-            { style: "font-size: 12px; color: #64748b;" },
-            "コード量: tabs.js は約35行。軽量エンジンでのメモリ消費は極小です。",
-          ),
-        ),
-      id: "tab1",
-      label: "概要",
-    },
-    {
-      content: () =>
-        div(
-          p(
-            "Cobalt/Webf/Lynx/Servo のいずれでも完全動作。ブラウザ標準のDOM Level 1/2 APIのみで実装されています。",
-          ),
-          p(
-            { style: "font-size: 12px; color: #64748b;" },
-            "Web Components (Shadow DOM) を使用しないため、ネイティブブリッジでのトラブルが起きません。",
-          ),
-        ),
-      id: "tab2",
-      label: "エンジン互換性",
-    },
-    {
-      content: () =>
-        div(
-          p(
-            "タブボタンにはキーボード/リモコン用のフォーカススタイルを設定。矢印キーやTabキーでの移動が可能です。",
-          ),
-        ),
-      id: "tab3",
-      label: "A11y/操作性",
-    },
-  ];
 
   return div(
     { class: "c-container u-space-y-lg" },

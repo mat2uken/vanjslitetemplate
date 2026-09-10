@@ -44,6 +44,15 @@ export function openModal({
     }
   }
 
+  const okBtn = button(
+    {
+      class: "c-btn c-btn-primary",
+      id: "modal-ok-btn",
+      onclick: handleOk,
+    },
+    okText,
+  );
+
   // Backdrop overlay
   const overlay = div(
     {
@@ -86,14 +95,7 @@ export function openModal({
               cancelText,
             )
           : null,
-        button(
-          {
-            class: "c-btn c-btn-primary",
-            id: "modal-ok-btn",
-            onclick: handleOk,
-          },
-          okText,
-        ),
+        okBtn,
       ),
     ),
   );
@@ -101,12 +103,9 @@ export function openModal({
   unmountPortalFn = mountPortal(overlay);
   removeKeyHandler = onSafeBackKey(close);
 
-  // Auto focus OK button for Smart TV / Keyboard navigation
+  // Auto focus OK button for Smart TV / Keyboard navigation (zero-lookup direct focus)
   setTimeout(() => {
-    const okBtn = overlay.querySelector("#modal-ok-btn");
-    if (okBtn) {
-      okBtn.focus();
-    }
+    okBtn.focus();
   }, 30);
 
   return { close };
