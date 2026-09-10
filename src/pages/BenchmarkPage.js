@@ -162,11 +162,7 @@ export function BenchmarkPage() {
             : table(
                 { class: "c-table" },
                 thead(van.tags.tr(th("ID"), th("ランダムハッシュ"), th("値"))),
-                tbody(
-                  itemsState.val.map((it) =>
-                    van.tags.tr(td(String(it.id)), td(it.title), td(String(it.val))),
-                  ),
-                ),
+                tbody(itemsState.val.map((it) => van.tags.tr(td(it.id), td(it.title), td(it.val)))),
               ),
       ),
     ),

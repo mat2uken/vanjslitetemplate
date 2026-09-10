@@ -4,13 +4,10 @@
  * Features:
  *  - Viewport Flip (switches top/bottom based on available space)
  *  - Viewport Clamp (keeps element within viewport boundaries)
- *  - Embedded safe (relies only on getBoundingClientRect and window size)
+ *  - Embedded safe (relies only on getBoundingClientRect and window dimensions)
  */
-import isPresent from "@nkzw/core/isPresent.js";
 
-function clamp(value, min, max) {
-  return Math.max(min, Math.min(value, max));
-}
+const clamp = (val, min, max) => (val < min ? min : val > max ? max : val);
 
 export function placeSafePopover(triggerEl, popoverEl, options = {}) {
   const { margin = 8, offset = 6, placement = "bottom" } = options;
@@ -18,15 +15,9 @@ export function placeSafePopover(triggerEl, popoverEl, options = {}) {
   const tRect = triggerEl.getBoundingClientRect();
   const pRect = popoverEl.getBoundingClientRect();
 
-  const clientWidth = document.documentElement ? document.documentElement.clientWidth : 0;
-  const clientHeight = document.documentElement ? document.documentElement.clientHeight : 0;
-
-  const vw =
-    isPresent(window.innerWidth) && window.innerWidth > 0 ? window.innerWidth : clientWidth || 360;
-  const vh =
-    isPresent(window.innerHeight) && window.innerHeight > 0
-      ? window.innerHeight
-      : clientHeight || 640;
+  const docEl = document.documentElement;
+  const vw = window.innerWidth || docEl?.clientWidth || 360;
+  const vh = window.innerHeight || docEl?.clientHeight || 640;
 
   // Vertical position with Flip
   let top;

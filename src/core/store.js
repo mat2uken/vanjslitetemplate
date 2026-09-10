@@ -21,7 +21,6 @@ export const authStore = {
     return isAuthenticated;
   },
 
-
   // Actions
   login: async (name = "Taro") => {
     isLoading.val = true;

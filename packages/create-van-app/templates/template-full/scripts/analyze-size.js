@@ -52,14 +52,15 @@ async function main() {
 
   const coreModules = [
     { file: "node_modules/vanjs-core/src/van.js", label: "1. VanJS Core (vanjs-core)" },
-    { file: "src/core/router.js", label: "2. Hash Router (van.state)" },
-    { file: "src/utils/position.js", label: "3. Safe Position Engine" },
-    { file: "src/utils/events.js", label: "4. Safe Events & Back Key" },
-    { file: "src/components/portal.js", label: "5. Portal Engine" },
-    { file: "src/components/modal.js", label: "6. Portal Modal" },
-    { file: "src/components/popover.js", label: "7. Safe Popover" },
-    { file: "src/components/tabs.js", label: "8. Lightweight Tabs" },
-    { file: "src/components/toast.js", label: "9. Lightweight Toast" },
+    { file: "src/core/router.js", label: "2. Client Router (Regex/Params)" },
+    { file: "src/core/store.js", label: "3. Global Store (authStore)" },
+    { file: "src/utils/position.js", label: "4. Safe Position Engine" },
+    { file: "src/utils/events.js", label: "5. Safe Events & Back Key" },
+    { file: "src/components/portal.js", label: "6. Portal Engine" },
+    { file: "src/components/modal.js", label: "7. Portal Modal" },
+    { file: "src/components/popover.js", label: "8. Safe Popover" },
+    { file: "src/components/tabs.js", label: "9. Lightweight Tabs" },
+    { file: "src/components/toast.js", label: "10. Lightweight Toast" },
     { file: "src/bundle-core.js", label: "★ FULL MODEL-C RUNTIME" },
   ];
 

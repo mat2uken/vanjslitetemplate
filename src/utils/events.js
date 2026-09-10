@@ -12,7 +12,6 @@ export function onSafeTap(element, handler) {
   const onTouchEnd = (e) => {
     touchHandled = true;
     handler(e);
-    // Reset flag after browser click synthetic event has passed
     setTimeout(() => {
       touchHandled = false;
     }, 400);
@@ -40,24 +39,20 @@ export function onSafeTap(element, handler) {
  * - webOS TV Back (keyCode 461)
  * - Android TV Back (key === 'GoBack' || keyCode 4)
  */
+const BACK_KEY_SET = new Set(["Escape", "GoBack", 27, 10_009, 461, 4]);
+
 export function onSafeBackKey(handler) {
   const onKeyDown = (e) => {
-    const isBack =
-      e.key === "Escape" ||
-      e.key === "GoBack" ||
-      e.keyCode === 27 ||
-      e.keyCode === 10_009 ||
-      e.keyCode === 461 ||
-      e.keyCode === 4;
-
-    if (isBack) {
+    if (BACK_KEY_SET.has(e.key) || BACK_KEY_SET.has(e.keyCode)) {
       e.preventDefault();
       handler(e);
     }
   };
 
   window.addEventListener("keydown", onKeyDown);
-  return () => window.removeEventListener("keydown", onKeyDown);
+  return () => {
+    window.removeEventListener("keydown", onKeyDown);
+  };
 }
 
 /**
@@ -74,7 +69,6 @@ export function onOutsideTap(elements, onOutside) {
     }
   };
 
-  // Delay registration to prevent immediate firing from triggering event
   const timer = setTimeout(() => {
     document.addEventListener("click", onDocumentEvent, true);
     document.addEventListener("touchend", onDocumentEvent, true);

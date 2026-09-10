@@ -1,14 +1,16 @@
 import van from "../core/van.js";
 
-const { button, div } = van.tags;
+const { button, div, span } = van.tags;
 
 /**
  * Lightweight Tabs Component driven by van.state
+ * Uses O(1) Map lookup for instant content resolution without repeated array scans.
  * @param {Array<{id: string, label: string, content: () => HTMLElement}>} tabs
- * @param {string} defaultTabId
+ * @param {string} [defaultTabId]
  */
 export function createTabs(tabs, defaultTabId = tabs[0]?.id) {
   const activeTabId = van.state(defaultTabId);
+  const tabContentMap = new Map(tabs.map((t) => [t.id, t.content]));
 
   return div(
     { class: "c-tabs" },
@@ -19,20 +21,21 @@ export function createTabs(tabs, defaultTabId = tabs[0]?.id) {
         button(
           {
             class: () => `c-tabs-btn ${activeTabId.val === tab.id ? "is-active" : ""}`,
-            onclick: () => (activeTabId.val = tab.id),
+            onclick: () => {
+              activeTabId.val = tab.id;
+            },
           },
           tab.label,
         ),
       ),
     ),
-    // Tab Body (dynamically evaluates active content)
+    // Tab Body (O(1) Map lookup)
     div({ class: "c-tabs-content" }, () => {
-      const current = tabs.find((t) => t.id === activeTabId.val);
-      return current
-        ? typeof current.content === "function"
-          ? current.content()
-          : current.content
-        : "";
+      const content = tabContentMap.get(activeTabId.val);
+      if (!content) {
+        return "";
+      }
+      return typeof content === "function" ? content() : content;
     }),
   );
 }
@@ -48,12 +51,14 @@ export function createAccordionItem(title, content, defaultOpen = false) {
     button(
       {
         class: "c-btn",
-        onclick: () => (isOpen.val = !isOpen.val),
+        onclick: () => {
+          isOpen.val = !isOpen.val;
+        },
         style:
           "width: 100%; border: none; border-radius: 0; display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background-color: #f8fafc; font-weight: 600;",
       },
       title,
-      () => van.tags.span({ style: "font-size: 12px; color: #64748b;" }, isOpen.val ? "▲" : "▼"),
+      () => span({ style: "font-size: 12px; color: #64748b;" }, isOpen.val ? "▲" : "▼"),
     ),
     () =>
       isOpen.val

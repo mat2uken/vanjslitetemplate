@@ -2,7 +2,7 @@ import van from "../core/van.js";
 import { mountPortal } from "./portal.js";
 import { onSafeBackKey } from "../utils/events.js";
 
-const { button, div, h3 } = van.tags;
+const { button, div, h3, p } = van.tags;
 
 /**
  * Creates and displays a Portal-based Modal.
@@ -19,25 +19,26 @@ export function openModal({
   let unmountPortalFn = null;
   let removeKeyHandler = null;
 
-  function close() {
+  function cleanup() {
     if (removeKeyHandler) {
       removeKeyHandler();
+      removeKeyHandler = null;
     }
     if (unmountPortalFn) {
       unmountPortalFn();
+      unmountPortalFn = null;
     }
+  }
+
+  function close() {
+    cleanup();
     if (onCancel) {
       onCancel();
     }
   }
 
   function handleOk() {
-    if (removeKeyHandler) {
-      removeKeyHandler();
-    }
-    if (unmountPortalFn) {
-      unmountPortalFn();
-    }
+    cleanup();
     if (onOk) {
       onOk();
     }
@@ -69,7 +70,10 @@ export function openModal({
         ),
       ),
       // Body
-      div({ class: "c-modal-body" }, typeof content === "string" ? p(content) : content),
+      div(
+        { class: "c-modal-body" },
+        typeof content === "string" ? p({ style: "margin: 0 0 8px 0;" }, content) : content,
+      ),
       // Footer
       div(
         { class: "c-modal-footer u-space-x" },
@@ -106,8 +110,4 @@ export function openModal({
   }, 30);
 
   return { close };
-}
-
-function p(text) {
-  return van.tags.p({ style: "margin: 0 0 8px 0;" }, text);
 }

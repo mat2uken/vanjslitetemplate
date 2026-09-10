@@ -66,6 +66,7 @@ function parseLocation() {
 
 /**
  * Parse query string (?key=val&sort=asc) into key-value object.
+ * Zero-copy string slicing with indexOf('=') avoids intermediate array allocations.
  * Embedded-safe: Does not require modern URLSearchParams.
  */
 export function parseQuery(search = "") {
@@ -78,16 +79,17 @@ export function parseQuery(search = "") {
   }
 
   const result = {};
-  const pairs = queryStr.split("&");
-  for (const pair of pairs) {
+  for (const pair of queryStr.split("&")) {
     if (!pair) {
       continue;
     }
-    const [rawKey, rawVal = ""] = pair.split("=");
+    const eqIdx = pair.indexOf("=");
+    const rawKey = eqIdx === -1 ? pair : pair.slice(0, eqIdx);
+    const rawVal = eqIdx === -1 ? "" : pair.slice(eqIdx + 1);
     try {
-      const key = decodeURIComponent(rawKey.replaceAll("+", " "));
-      const val = decodeURIComponent(rawVal.replaceAll("+", " "));
-      result[key] = val;
+      result[decodeURIComponent(rawKey.replaceAll("+", " "))] = decodeURIComponent(
+        rawVal.replaceAll("+", " "),
+      );
     } catch {
       result[rawKey] = rawVal;
     }
@@ -138,23 +140,27 @@ function normalizeRoutes(routes) {
 
 /**
  * Match a pathname against the route table and extract dynamic params
+ * Uses regex.exec() and standard loop for maximum V8 engine performance without callback closures.
  */
 export function matchRoute(routeTable, currentPathname) {
   const normalized = normalizeRoutes(routeTable);
 
-  for (const { pattern, component } of normalized) {
+  for (let i = 0; i < normalized.length; i++) {
+    const { pattern, component } = normalized[i];
     const { regex, keys } = compilePattern(pattern);
-    const match = currentPathname.match(regex);
+    const match = regex.exec(currentPathname);
 
     if (match) {
       const params = {};
-      keys.forEach((key, index) => {
+      for (let k = 0; k < keys.length; k++) {
+        const key = keys[k];
+        const val = match[k + 1];
         try {
-          params[key] = decodeURIComponent(match[index + 1]);
+          params[key] = decodeURIComponent(val);
         } catch {
-          params[key] = match[index + 1];
+          params[key] = val;
         }
-      });
+      }
       return { component, params, pattern };
     }
   }
@@ -268,8 +274,8 @@ export function RouterView(
   const normalized = normalizeRoutes(routes);
 
   // Pre-compile all route patterns on mount
-  for (const { pattern } of normalized) {
-    compilePattern(pattern);
+  for (let i = 0; i < normalized.length; i++) {
+    compilePattern(normalized[i].pattern);
   }
 
   return () => {
